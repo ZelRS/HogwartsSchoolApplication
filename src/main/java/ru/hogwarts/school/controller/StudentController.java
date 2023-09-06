@@ -26,8 +26,8 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping("students/{age}")
-    public ResponseEntity<List<Student>> getStudentsByAge(@PathVariable("age") int age) {
+    @GetMapping
+    public ResponseEntity<List<Student>> getStudentsByAge(@RequestParam(required = false) int age) {
         List<Student> studentsByAge = studentService.getAllStudentsByAge(age);
         if (studentsByAge == null) {
             return ResponseEntity.notFound().build();

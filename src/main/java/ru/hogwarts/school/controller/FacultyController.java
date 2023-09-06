@@ -25,8 +25,8 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
-    @GetMapping("faculties/{color}")
-    public ResponseEntity<List<Faculty>> getStudentsByAge(@PathVariable("color") String color) {
+    @GetMapping
+    public ResponseEntity<List<Faculty>> getStudentsByAge(@RequestParam(required = false) String color) {
         List<Faculty> facultiesByColor = facultyService.getAllFacultiesByColor(color);
         if (facultiesByColor == null) {
             return ResponseEntity.notFound().build();
