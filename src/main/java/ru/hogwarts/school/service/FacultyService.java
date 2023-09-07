@@ -1,10 +1,14 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.exception.NullColorFieldException;
+import ru.hogwarts.school.exception.NullNameFieldException;
 import ru.hogwarts.school.model.Faculty;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 @Service
 public class FacultyService {
@@ -13,6 +17,10 @@ public class FacultyService {
 
     //    create
     public Faculty createFaculty(Faculty faculty) {
+        facultyNameValidator(faculty);
+        facultyColorValidator(faculty);
+        referenceNameMaker(faculty);
+        referenceColorMaker(faculty);
         faculty.setId(++counter);
         faculties.put(counter, faculty);
         return faculty;
@@ -28,6 +36,10 @@ public class FacultyService {
 
     //    update
     public Faculty updateFaculty(Faculty faculty) {
+        facultyNameValidator(faculty);
+        facultyColorValidator(faculty);
+        referenceNameMaker(faculty);
+        referenceColorMaker(faculty);
         if (faculties.containsKey(faculty.getId())) {
             faculties.put(faculty.getId(), faculty);
             return faculty;
@@ -57,5 +69,25 @@ public class FacultyService {
 
     public List<Faculty> getAllFaculties() {
         return new ArrayList<>(faculties.values());
+    }
+
+    private static void referenceNameMaker(Faculty faculty) {
+        faculty.setName(capitalize(faculty.getName().toLowerCase()));
+    }
+
+    private static void referenceColorMaker(Faculty faculty) {
+        faculty.setColor(faculty.getColor().toUpperCase());
+    }
+
+    private static void facultyNameValidator(Faculty faculty) {
+        if (isBlank(faculty.getName())) {
+            throw new NullNameFieldException("Вы не задали имя");
+        }
+    }
+
+    private static void facultyColorValidator(Faculty faculty) {
+        if (isBlank(faculty.getColor())) {
+            throw new NullColorFieldException("Вы не задали цвет");
+        }
     }
 }

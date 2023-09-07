@@ -2,6 +2,8 @@ package ru.hogwarts.school.model;
 
 import java.util.Objects;
 
+import static org.apache.commons.lang3.StringUtils.capitalize;
+
 public class Student {
     private long id;
     private String name;
@@ -12,7 +14,7 @@ public class Student {
 
     public Student(long id, String name, int age) {
         this.id = id;
-        this.name = name;
+        this.name = capitalize(name.toLowerCase());
         this.age = age;
     }
 

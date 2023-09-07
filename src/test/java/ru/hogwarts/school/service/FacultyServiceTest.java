@@ -65,10 +65,10 @@ class FacultyServiceTest {
     @Test
     void ShouldGetAllStudentsByAge() {
         facultyService.createFaculty(CREATED_FACULTY);
-        assertThat(facultyService.getAllFacultiesByColor("красный"))
+        assertThat(facultyService.getAllFacultiesByColor("КРАСНЫЙ"))
                 .isNotEqualTo(FACULTIES_LIST);
 
-        assertThat(facultyService.getAllFacultiesByColor("красный"))
+        assertThat(facultyService.getAllFacultiesByColor("КРАСНЫЙ"))
                 .hasSize(1);
     }
 
