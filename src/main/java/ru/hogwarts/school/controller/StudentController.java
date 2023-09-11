@@ -37,13 +37,13 @@ public class StudentController {
     @DeleteMapping("{id}")
     @Operation(summary = "Удаление студента")
     public ResponseEntity<Student> delete(@PathVariable("id") long id) {
-        Student student = studentService.delete(id);
-        return ResponseEntity.ok(student);
+        studentService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("{id}")
     @Operation(summary = "Получить студента по id")
-    public ResponseEntity<Student> getAll(@PathVariable("id") long id) {
+    public ResponseEntity<Student> get(@PathVariable("id") long id) {
         Student student = studentService.get(id);
         return ResponseEntity.ok(student);
     }
