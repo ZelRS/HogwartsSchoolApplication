@@ -1,15 +1,14 @@
 package ru.hogwarts.school.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 @Entity
 public class Faculty {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "facultyIdSeq",  sequenceName = "faculty_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "facultyIdSeq")
     private long id;
     private String name;
     private String color;
