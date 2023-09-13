@@ -5,74 +5,81 @@ import ru.hogwarts.school.exception.EntityNotFoundException;
 import ru.hogwarts.school.exception.NullNameFieldException;
 import ru.hogwarts.school.exception.StudentAgeException;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Optional;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 public class StudentServiceImpl implements StudentService {
-    private final Map<Long, Student> students = new HashMap<>();
-    private static long counter = 0;
+   private final StudentRepository studentRepository;
 
+    public StudentServiceImpl(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
+    @Override
     public Student create(Student student) {
-        studentNameValidator(student);
-        studentAgeValidator(student);
-        student.setId(++counter);
+        nameValidator(student);
+        ageValidator(student.getAge());
         referenceNameMaker(student);
-        students.put(counter, student);
-        return student;
+        return studentRepository.save(student);
     }
 
+    @Override
     public Student update(Student student) {
-        studentNameValidator(student);
-        studentAgeValidator(student);
+        nameValidator(student);
+        ageValidator(student.getAge());
         referenceNameMaker(student);
-        if (students.containsKey(student.getId())) {
-            students.put(student.getId(), student);
-            return student;
+        Optional<Student> UpdatedStudent = studentRepository.findById(student.getId());
+        if (UpdatedStudent.isEmpty()) {
+            throw new EntityNotFoundException("Студент не найден");
         }
-        throw new EntityNotFoundException("Студент не найден");
+        return studentRepository.save(student);
     }
 
-    public Student delete(long id) {
-        if (students.containsKey(id)) {
-            return students.remove(id);
+    @Override
+    public void delete(long id) {
+        Optional<Student> student = studentRepository.findById(id);
+        if (student.isEmpty()) {
+            throw new EntityNotFoundException("Студент не найден");
         }
-        throw new EntityNotFoundException("Студент не найден");
+        studentRepository.deleteById(id);
     }
 
+    @Override
     public Student get(long id) {
-        if (students.containsKey(id)) {
-            return students.get(id);
+        Optional<Student> student = studentRepository.findById(id);
+        if (student.isEmpty()) {
+            throw new EntityNotFoundException("Студент не найден");
         }
-        throw new EntityNotFoundException("Студент не найден");
+        return student.get();
     }
 
-    public List<Student> getByAge(int age) {
-        List<Student> students = this.students.values()
-                .stream()
-                .filter(e -> e.getAge() == age)
-                .sorted(Comparator.comparingLong(Student::getId))
-                .collect(Collectors.toList());
-        if (!students.isEmpty()) {
-            return students;
+    @Override
+    public Collection<Student> getAll() {
+        Collection<Student> students = studentRepository.findAll();
+        if (students.isEmpty()) {
+            throw new EntityNotFoundException("Студенты не найдены");
         }
-        throw new EntityNotFoundException("Студенты не найдены");
+        return students;
     }
 
-    public List<Student> getAll() {
-        List<Student> students = new ArrayList<>(this.students.values());
-        if (!students.isEmpty()) {
-            return students;
+    @Override
+    public Collection<Student> getByAge(int age) {
+        Collection<Student> students = studentRepository.findByAge(age);
+        if (students.isEmpty()) {
+            throw new EntityNotFoundException("Студенты не найдены");
         }
-        throw new EntityNotFoundException("Студенты не найдены");
+        return students;
     }
 
-    private static void studentAgeValidator(Student student) {
-        if (student.getAge() <= 0 || student.getAge() > 100) {
+    private static void ageValidator(int age) {
+        if (age <= 0 || age > 100) {
             throw new StudentAgeException("Некорректный возраст");
         }
     }
@@ -81,9 +88,10 @@ public class StudentServiceImpl implements StudentService {
         student.setName(capitalize(student.getName().toLowerCase()));
     }
 
-    private static void studentNameValidator(Student student) {
+    private static void nameValidator(Student student) {
         if (isBlank(student.getName())) {
             throw new NullNameFieldException("Вы не задали имя");
         }
     }
+
 }

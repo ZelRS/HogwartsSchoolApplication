@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("student")
@@ -37,28 +37,28 @@ public class StudentController {
     @DeleteMapping("{id}")
     @Operation(summary = "Удаление студента")
     public ResponseEntity<Student> delete(@PathVariable("id") long id) {
-        Student student = studentService.delete(id);
-        return ResponseEntity.ok(student);
+        studentService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("{id}")
     @Operation(summary = "Получить студента по id")
-    public ResponseEntity<Student> getAll(@PathVariable("id") long id) {
+    public ResponseEntity<Student> get(@PathVariable("id") long id) {
         Student student = studentService.get(id);
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping("age")
-    @Operation(summary = "Получить всех студентов по указанному возрасту")
-    public ResponseEntity<List<Student>> getStudentsByAge(@RequestParam int age) {
-        List<Student> students = studentService.getByAge(age);
+    @GetMapping("all")
+    @Operation(summary = "Получить всех студентов")
+    public ResponseEntity<Collection<Student>> getAll() {
+        Collection<Student> students = studentService.getAll();
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping("all")
-    @Operation(summary = "Получить всех студентов")
-    public ResponseEntity<List<Student>> getAll() {
-        List<Student> students = studentService.getAll();
+    @GetMapping("age")
+    @Operation(summary = "Получить всех студентов по указанному возрасту")
+    public ResponseEntity<Collection<Student>> getByAge(@RequestParam int age) {
+        Collection<Student> students = studentService.getByAge(age);
         return ResponseEntity.ok(students);
     }
 }
