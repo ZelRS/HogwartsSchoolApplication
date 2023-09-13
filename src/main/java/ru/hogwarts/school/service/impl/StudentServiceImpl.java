@@ -8,7 +8,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
@@ -22,16 +22,18 @@ public class StudentServiceImpl implements StudentService {
         this.studentRepository = studentRepository;
     }
 
+    @Override
     public Student create(Student student) {
-        studentNameValidator(student);
-        studentAgeValidator(student);
+        nameValidator(student);
+        ageValidator(student.getAge());
         referenceNameMaker(student);
         return studentRepository.save(student);
     }
 
+    @Override
     public Student update(Student student) {
-        studentNameValidator(student);
-        studentAgeValidator(student);
+        nameValidator(student);
+        ageValidator(student.getAge());
         referenceNameMaker(student);
         Optional<Student> UpdatedStudent = studentRepository.findById(student.getId());
         if (UpdatedStudent.isEmpty()) {
@@ -40,6 +42,7 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.save(student);
     }
 
+    @Override
     public void delete(long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isEmpty()) {
@@ -48,6 +51,7 @@ public class StudentServiceImpl implements StudentService {
         studentRepository.deleteById(id);
     }
 
+    @Override
     public Student get(long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isEmpty()) {
@@ -56,24 +60,26 @@ public class StudentServiceImpl implements StudentService {
         return student.get();
     }
 
-    public List<Student> getByAge(int age) {
-        List<Student> students = studentRepository.getByAge(age);
+    @Override
+    public Collection<Student> getAll() {
+        Collection<Student> students = studentRepository.findAll();
         if (students.isEmpty()) {
             throw new EntityNotFoundException("Студенты не найдены");
         }
         return students;
     }
 
-    public List<Student> getAll() {
-        List<Student> students = studentRepository.findAll();
-        if (!students.isEmpty()) {
-            return students;
+    @Override
+    public Collection<Student> getByAge(int age) {
+        Collection<Student> students = studentRepository.findByAge(age);
+        if (students.isEmpty()) {
+            throw new EntityNotFoundException("Студенты не найдены");
         }
-        throw new EntityNotFoundException("Студенты не найдены");
+        return students;
     }
 
-    private static void studentAgeValidator(Student student) {
-        if (student.getAge() <= 0 || student.getAge() > 100) {
+    private static void ageValidator(int age) {
+        if (age <= 0 || age > 100) {
             throw new StudentAgeException("Некорректный возраст");
         }
     }
@@ -82,9 +88,10 @@ public class StudentServiceImpl implements StudentService {
         student.setName(capitalize(student.getName().toLowerCase()));
     }
 
-    private static void studentNameValidator(Student student) {
+    private static void nameValidator(Student student) {
         if (isBlank(student.getName())) {
             throw new NullNameFieldException("Вы не задали имя");
         }
     }
+
 }

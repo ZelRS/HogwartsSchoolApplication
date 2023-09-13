@@ -4,13 +4,16 @@ import javax.persistence.*;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
+
 @Entity
 public class Student {
     @Id
-    @SequenceGenerator(name = "studentIdSeq",  sequenceName = "student_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "studentIdSeq", sequenceName = "student_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "studentIdSeq")
     private long id;
+
     private String name;
+
     private int age;
 
     public Student() {

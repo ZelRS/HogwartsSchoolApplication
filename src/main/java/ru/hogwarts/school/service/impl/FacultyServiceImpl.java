@@ -8,7 +8,7 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
@@ -22,17 +22,19 @@ public class FacultyServiceImpl implements FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
+    @Override
     public Faculty create(Faculty faculty) {
-        facultyNameValidator(faculty);
-        facultyColorValidator(faculty);
+        nameValidator(faculty);
+        colorValidator(faculty);
         referenceNameMaker(faculty);
         referenceColorMaker(faculty);
         return facultyRepository.save(faculty);
     }
 
+    @Override
     public Faculty update(Faculty faculty) {
-        facultyNameValidator(faculty);
-        facultyColorValidator(faculty);
+        nameValidator(faculty);
+        colorValidator(faculty);
         referenceNameMaker(faculty);
         referenceColorMaker(faculty);
         Optional<Faculty> UpdatedFaculty = facultyRepository.findById(faculty.getId());
@@ -42,6 +44,7 @@ public class FacultyServiceImpl implements FacultyService {
         return facultyRepository.save(faculty);
     }
 
+    @Override
     public void delete(long id) {
         Optional<Faculty> faculty = facultyRepository.findById(id);
         if (faculty.isEmpty()) {
@@ -50,6 +53,7 @@ public class FacultyServiceImpl implements FacultyService {
         facultyRepository.deleteById(id);
     }
 
+    @Override
     public Faculty get(long id) {
         Optional<Faculty> faculty = facultyRepository.findById(id);
         if (faculty.isEmpty()) {
@@ -58,20 +62,22 @@ public class FacultyServiceImpl implements FacultyService {
         return faculty.get();
     }
 
-    public List<Faculty> getByColor(String color) {
-        List<Faculty> faculties = facultyRepository.getByColor(color);
+    @Override
+    public Collection<Faculty> getAll() {
+        Collection<Faculty> faculties = facultyRepository.findAll();
         if (faculties.isEmpty()) {
             throw new EntityNotFoundException("Факультеты не найдены");
         }
         return faculties;
     }
 
-    public List<Faculty> getAll() {
-        List<Faculty> faculties = facultyRepository.findAll();
-        if (!faculties.isEmpty()) {
-            return faculties;
+    @Override
+    public Collection<Faculty> getByColor(String color) {
+        Collection<Faculty> faculties = facultyRepository.findByColor(color);
+        if (faculties.isEmpty()) {
+            throw new EntityNotFoundException("Факультеты не найдены");
         }
-        throw new EntityNotFoundException("Факультеты не найдены");
+        return faculties;
     }
 
     private static void referenceNameMaker(Faculty faculty) {
@@ -82,13 +88,13 @@ public class FacultyServiceImpl implements FacultyService {
         faculty.setColor(faculty.getColor().toUpperCase());
     }
 
-    private static void facultyNameValidator(Faculty faculty) {
+    private static void nameValidator(Faculty faculty) {
         if (isBlank(faculty.getName())) {
             throw new NullNameFieldException("Вы не задали имя");
         }
     }
 
-    private static void facultyColorValidator(Faculty faculty) {
+    private static void colorValidator(Faculty faculty) {
         if (isBlank(faculty.getColor())) {
             throw new NullColorFieldException("Вы не задали цвет");
         }
