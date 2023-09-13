@@ -7,13 +7,17 @@ import java.util.Collection;
 public interface StudentService {
     Student create(Student student);
 
-    Student get(long id);
+    Student getById(long id);
 
     Student update(Student student);
 
-    void delete(long id);
-
-    Collection<Student> getByAge(int age);
+    void deleteById(long id);
 
     Collection<Student> getAll();
+
+    Collection<Student> getAllByAge(int age);
+
+    Collection<Student> getAllByAgeBetween(int max, int min);
+
+    Collection<Student> getAllByFaculty(long id);
 }

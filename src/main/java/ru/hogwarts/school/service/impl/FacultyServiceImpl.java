@@ -45,7 +45,7 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public void delete(long id) {
+    public void deleteById(long id) {
         Optional<Faculty> faculty = facultyRepository.findById(id);
         if (faculty.isEmpty()) {
             throw new EntityNotFoundException("Факультет не найден");
@@ -54,7 +54,7 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Faculty get(long id) {
+    public Faculty getById(long id) {
         Optional<Faculty> faculty = facultyRepository.findById(id);
         if (faculty.isEmpty()) {
             throw new EntityNotFoundException("Факультет не найден");
@@ -72,12 +72,26 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Collection<Faculty> getByColor(String color) {
-        Collection<Faculty> faculties = facultyRepository.findByColor(color);
+    public Collection<Faculty> getAllByColor(String color) {
+        Collection<Faculty> faculties = facultyRepository.findByColorIgnoreCase(color);
         if (faculties.isEmpty()) {
             throw new EntityNotFoundException("Факультеты не найдены");
         }
         return faculties;
+    }
+
+    @Override
+    public Faculty getByNameOrColor(String name, String color) {
+        Optional<Faculty> faculty = facultyRepository.findFirstByNameOrColorIgnoreCase(name, color);
+        if (faculty.isEmpty()) {
+            throw new EntityNotFoundException("Факультет не найден");
+        }
+        return faculty.get();
+    }
+
+    @Override
+    public Faculty getByStudent(long facultyId) {
+        return facultyRepository.findFacultyByStudentsId(facultyId);
     }
 
     private static void referenceNameMaker(Faculty faculty) {

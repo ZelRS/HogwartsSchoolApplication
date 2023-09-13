@@ -7,13 +7,17 @@ import java.util.Collection;
 public interface FacultyService {
     Faculty create(Faculty faculty);
 
-    Faculty get(long id);
+    Faculty getById(long id);
 
     Faculty update(Faculty faculty);
 
-    void delete(long id);
+    void deleteById(long id);
 
-    Collection<Faculty> getByColor(String color);
+    Collection<Faculty> getAllByColor(String color);
 
     Collection<Faculty> getAll();
+
+    Faculty getByNameOrColor(String name, String color);
+
+    Faculty getByStudent(long studentId);
 }

@@ -16,7 +16,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 public class StudentServiceImpl implements StudentService {
-   private final StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
     public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
@@ -43,7 +43,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void delete(long id) {
+    public void deleteById(long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isEmpty()) {
             throw new EntityNotFoundException("Студент не найден");
@@ -52,7 +52,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student get(long id) {
+    public Student getById(long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isEmpty()) {
             throw new EntityNotFoundException("Студент не найден");
@@ -70,12 +70,31 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Collection<Student> getByAge(int age) {
+    public Collection<Student> getAllByAge(int age) {
         Collection<Student> students = studentRepository.findByAge(age);
         if (students.isEmpty()) {
             throw new EntityNotFoundException("Студенты не найдены");
         }
         return students;
+    }
+
+    @Override
+    public Collection<Student> getAllByAgeBetween(int min, int max) {
+        ageValidator(min);
+        ageValidator(max);
+        if (max < min) {
+            throw new StudentAgeException("Задан некорректный диапазон");
+        }
+        Collection<Student> students = studentRepository.findByAgeBetween(min, max);
+        if (students.isEmpty()) {
+            throw new EntityNotFoundException("Студенты не найдены");
+        }
+        return students;
+    }
+
+    @Override
+    public Collection<Student> getAllByFaculty(long id) {
+        return studentRepository.findStudentsByFacultyId(id);
     }
 
     private static void ageValidator(int age) {
