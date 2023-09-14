@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.EntityNotFoundException;
 import ru.hogwarts.school.exception.NullNameFieldException;
 import ru.hogwarts.school.exception.StudentAgeException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
@@ -62,20 +63,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Collection<Student> getAll() {
-        Collection<Student> students = studentRepository.findAll();
-        if (students.isEmpty()) {
-            throw new EntityNotFoundException("Студенты не найдены");
-        }
-        return students;
+        return studentRepository.findAll();
     }
 
     @Override
     public Collection<Student> getAllByAge(int age) {
-        Collection<Student> students = studentRepository.findByAge(age);
-        if (students.isEmpty()) {
-            throw new EntityNotFoundException("Студенты не найдены");
-        }
-        return students;
+        return studentRepository.findByAge(age);
     }
 
     @Override
@@ -85,16 +78,13 @@ public class StudentServiceImpl implements StudentService {
         if (max < min) {
             throw new StudentAgeException("Задан некорректный диапазон");
         }
-        Collection<Student> students = studentRepository.findByAgeBetween(min, max);
-        if (students.isEmpty()) {
-            throw new EntityNotFoundException("Студенты не найдены");
-        }
-        return students;
+        return studentRepository.findByAgeBetween(min, max);
     }
 
     @Override
-    public Collection<Student> getAllByFaculty(long id) {
-        return studentRepository.findStudentsByFacultyId(id);
+    public Faculty getFacultyByStudentId(long id) {
+        Student student = getById(id);
+        return student.getFaculty();
     }
 
     private static void ageValidator(int age) {

@@ -5,6 +5,7 @@ import ru.hogwarts.school.exception.EntityNotFoundException;
 import ru.hogwarts.school.exception.NullColorFieldException;
 import ru.hogwarts.school.exception.NullNameFieldException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
@@ -64,34 +65,18 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Collection<Faculty> getAll() {
-        Collection<Faculty> faculties = facultyRepository.findAll();
-        if (faculties.isEmpty()) {
-            throw new EntityNotFoundException("Факультеты не найдены");
-        }
-        return faculties;
+        return facultyRepository.findAll();
     }
 
     @Override
-    public Collection<Faculty> getAllByColor(String color) {
-        Collection<Faculty> faculties = facultyRepository.findByColorIgnoreCase(color);
-        if (faculties.isEmpty()) {
-            throw new EntityNotFoundException("Факультеты не найдены");
-        }
-        return faculties;
+    public Collection<Faculty> getAllByNameOrColor(String name, String color) {
+        return facultyRepository.findAllByNameIgnoreCaseOrColorIgnoreCase(name, color);
     }
 
     @Override
-    public Faculty getByNameOrColor(String name, String color) {
-        Optional<Faculty> faculty = facultyRepository.findFirstByNameOrColorIgnoreCase(name, color);
-        if (faculty.isEmpty()) {
-            throw new EntityNotFoundException("Факультет не найден");
-        }
-        return faculty.get();
-    }
-
-    @Override
-    public Faculty getByStudent(long facultyId) {
-        return facultyRepository.findFacultyByStudentsId(facultyId);
+    public Collection<Student> getStudentsByFacultyId(long facultyId) {
+        Faculty faculty = getById(facultyId);
+        return faculty.getStudents();
     }
 
     private static void referenceNameMaker(Faculty faculty) {
