@@ -1,6 +1,7 @@
 package ru.hogwarts.school.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -9,6 +10,7 @@ import java.util.Objects;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 @Entity
+@JsonIgnoreProperties(value = {"students"})
 public class Faculty {
     @Id
     @SequenceGenerator(name = "facultyIdSeq", sequenceName = "faculty_id_seq", allocationSize = 1)
@@ -20,7 +22,7 @@ public class Faculty {
     private String color;
 
     @OneToMany(mappedBy = "faculty")
-    @JsonIgnore
+    @JsonManagedReference
     private Collection<Student> students;
 
     public Faculty() {

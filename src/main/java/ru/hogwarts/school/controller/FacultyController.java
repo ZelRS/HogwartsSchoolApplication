@@ -11,7 +11,7 @@ import ru.hogwarts.school.service.FacultyService;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("faculties")
+@RequestMapping("faculty")
 @Tag(name = "API для работы с факультетами")
 public class FacultyController {
     private final FacultyService facultyService;
@@ -61,10 +61,10 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
-    @GetMapping("{id}/students")
+    @GetMapping("students/{id}")
     @Operation(summary = "Получить студентов по id факультета")
     public ResponseEntity<Collection<Student>> getStudentsByFacultyId(@PathVariable("id") long facultyId) {
-        Collection<Student> students = facultyService.getStudentsByFacultyId(facultyId);
+        Collection<Student> students = facultyService.getById(facultyId).getStudents();
         return ResponseEntity.ok(students);
 
     }

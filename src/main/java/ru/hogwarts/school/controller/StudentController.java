@@ -11,7 +11,7 @@ import ru.hogwarts.school.service.StudentService;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("students")
+@RequestMapping("student")
 @Tag(name = "API для работы со студентами")
 public class StudentController {
 
@@ -49,27 +49,25 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping
-    @Operation(summary = "Получить всех студентов по возрасту. Если возраст не указан, получить всех студентов")
-    public ResponseEntity<Collection<Student>> getAllOrAllByAge(@RequestParam(required = false) Integer age) {
-        if (age != null) {
-            return ResponseEntity.ok(studentService.getAllByAge(age));
-        }
-        return ResponseEntity.ok(studentService.getAll());
-    }
-
-    @GetMapping("age_range")
+    @GetMapping("age")
     @Operation(summary = "Получить всех студентом по возрасту от и до указанного значения")
     public ResponseEntity<Collection<Student>> getAllByAgeBetween(@RequestParam int min, @RequestParam int max) {
         Collection<Student> students = studentService.getAllByAgeBetween(min, max);
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping("{id}/faculty")
+    @GetMapping("faculty/{id}")
     @Operation(summary = "Получить факультет по id студента")
     public ResponseEntity<Faculty> getFacultyByStudentId(@PathVariable("id") long studentId) {
-        Faculty faculty = studentService.getFacultyByStudentId(studentId);
+        Faculty faculty = studentService.getById(studentId).getFaculty();
         return ResponseEntity.ok(faculty);
+    }
+
+    @GetMapping("all")
+    @Operation(summary = "Получить всех студентов")
+    public ResponseEntity<Collection<Student>> getAll() {
+        Collection<Student> students = studentService.getAll();
+        return ResponseEntity.ok(students);
     }
 
 }

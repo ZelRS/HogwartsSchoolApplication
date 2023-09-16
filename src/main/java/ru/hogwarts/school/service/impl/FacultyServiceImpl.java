@@ -5,7 +5,6 @@ import ru.hogwarts.school.exception.EntityNotFoundException;
 import ru.hogwarts.school.exception.NullColorFieldException;
 import ru.hogwarts.school.exception.NullNameFieldException;
 import ru.hogwarts.school.model.Faculty;
-import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
@@ -71,12 +70,6 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public Collection<Faculty> getAllByNameOrColor(String name, String color) {
         return facultyRepository.findAllByNameIgnoreCaseOrColorIgnoreCase(name, color);
-    }
-
-    @Override
-    public Collection<Student> getStudentsByFacultyId(long facultyId) {
-        Faculty faculty = getById(facultyId);
-        return faculty.getStudents();
     }
 
     private static void referenceNameMaker(Faculty faculty) {

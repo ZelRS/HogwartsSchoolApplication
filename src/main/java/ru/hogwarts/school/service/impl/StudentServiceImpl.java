@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.EntityNotFoundException;
 import ru.hogwarts.school.exception.NullNameFieldException;
 import ru.hogwarts.school.exception.StudentAgeException;
-import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
@@ -67,11 +66,6 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Collection<Student> getAllByAge(int age) {
-        return studentRepository.findByAge(age);
-    }
-
-    @Override
     public Collection<Student> getAllByAgeBetween(int min, int max) {
         ageValidator(min);
         ageValidator(max);
@@ -79,12 +73,6 @@ public class StudentServiceImpl implements StudentService {
             throw new StudentAgeException("Задан некорректный диапазон");
         }
         return studentRepository.findByAgeBetween(min, max);
-    }
-
-    @Override
-    public Faculty getFacultyByStudentId(long id) {
-        Student student = getById(id);
-        return student.getFaculty();
     }
 
     private static void ageValidator(int age) {
