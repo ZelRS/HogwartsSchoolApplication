@@ -16,7 +16,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 public class StudentServiceImpl implements StudentService {
-   private final StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
     public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
@@ -43,7 +43,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void delete(long id) {
+    public void deleteById(long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isEmpty()) {
             throw new EntityNotFoundException("Студент не найден");
@@ -52,7 +52,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student get(long id) {
+    public Student getById(long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isEmpty()) {
             throw new EntityNotFoundException("Студент не найден");
@@ -62,20 +62,17 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Collection<Student> getAll() {
-        Collection<Student> students = studentRepository.findAll();
-        if (students.isEmpty()) {
-            throw new EntityNotFoundException("Студенты не найдены");
-        }
-        return students;
+        return studentRepository.findAll();
     }
 
     @Override
-    public Collection<Student> getByAge(int age) {
-        Collection<Student> students = studentRepository.findByAge(age);
-        if (students.isEmpty()) {
-            throw new EntityNotFoundException("Студенты не найдены");
+    public Collection<Student> getAllByAgeBetween(int min, int max) {
+        ageValidator(min);
+        ageValidator(max);
+        if (max < min) {
+            throw new StudentAgeException("Задан некорректный диапазон");
         }
-        return students;
+        return studentRepository.findByAgeBetween(min, max);
     }
 
     private static void ageValidator(int age) {
