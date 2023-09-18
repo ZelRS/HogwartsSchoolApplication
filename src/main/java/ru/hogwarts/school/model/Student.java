@@ -1,15 +1,17 @@
 package ru.hogwarts.school.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 @Entity(name = "Студент")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Student {
     @Id

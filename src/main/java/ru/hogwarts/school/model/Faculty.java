@@ -2,8 +2,9 @@ package ru.hogwarts.school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -12,7 +13,8 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 
 @Entity(name = "Факультет")
 @JsonIgnoreProperties(value = {"students"})
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Faculty {
     @Id
