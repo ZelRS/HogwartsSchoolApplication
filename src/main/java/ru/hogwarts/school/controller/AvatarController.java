@@ -36,8 +36,8 @@ public class AvatarController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("{id}/avatar-from-db")
-    @Operation(summary = "Получить аватар из базы данных")
+    @GetMapping("{id}/avatar/preview")
+    @Operation(summary = "Получить превью аватара из базы данных")
     public ResponseEntity<byte[]> downloadAvatar(@PathVariable Long id) {
         Avatar avatar = avatarService.findAvatar(id);
         HttpHeaders headers = new HttpHeaders();
@@ -46,7 +46,7 @@ public class AvatarController {
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(avatar.getData());
     }
 
-    @GetMapping("{id}/avatar-from-disk")
+    @GetMapping("{id}/avatar")
     @Operation(summary = "Получить аватар с диска")
     public void downloadAvatar(@PathVariable Long id, HttpServletResponse response) throws IOException {
         Avatar avatar = avatarService.findAvatar(id);
