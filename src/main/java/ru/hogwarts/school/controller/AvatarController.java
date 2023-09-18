@@ -28,11 +28,11 @@ public class AvatarController {
         this.avatarService = avatarService;
     }
 
-    @PostMapping(value = "{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Загрузить аватар в ДБ и на диск")
-    public ResponseEntity<String> uploadAvatar(@PathVariable Long id,
+    public ResponseEntity<String> uploadAvatar(@PathVariable Long studentId,
                                                @RequestParam MultipartFile avatar) throws IOException {
-        avatarService.uploadAvatar(id, avatar);
+        avatarService.uploadAvatar(studentId, avatar);
         return ResponseEntity.ok().build();
     }
 
