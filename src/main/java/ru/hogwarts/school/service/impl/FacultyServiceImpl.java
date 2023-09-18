@@ -45,7 +45,7 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(Long id) {
         Optional<Faculty> faculty = facultyRepository.findById(id);
         if (faculty.isEmpty()) {
             throw new EntityNotFoundException("Факультет не найден");
@@ -54,7 +54,7 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Faculty getById(long id) {
+    public Faculty getById(Long id) {
         Optional<Faculty> faculty = facultyRepository.findById(id);
         if (faculty.isEmpty()) {
             throw new EntityNotFoundException("Факультет не найден");

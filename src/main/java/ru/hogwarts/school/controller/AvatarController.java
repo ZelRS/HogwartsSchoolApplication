@@ -31,8 +31,8 @@ public class AvatarController {
     @PostMapping(value = "{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Загрузить аватар в ДБ и на диск")
     public ResponseEntity<String> uploadAvatar(@PathVariable Long studentId,
-                                               @RequestParam MultipartFile avatar) throws IOException {
-        avatarService.uploadAvatar(studentId, avatar);
+                                               @RequestParam MultipartFile avatarFile) throws IOException {
+        avatarService.uploadAvatar(studentId, avatarFile);
         return ResponseEntity.ok().build();
     }
 

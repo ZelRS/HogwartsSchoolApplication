@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import java.util.Objects;
+
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 @Entity(name = "Студент")
@@ -17,7 +19,7 @@ public class Student {
     @Id
     @SequenceGenerator(name = "studentIdSeq", sequenceName = "student_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "studentIdSeq")
-    private long id;
+    private Long id;
 
     private String name;
 
@@ -28,9 +30,32 @@ public class Student {
     @JsonBackReference
     private Faculty faculty;
 
-    public Student(long id, String name, int age) {
+    public Student(Long id, String name, int age) {
         this.id = id;
         this.name = capitalize(name.toLowerCase());
         this.age = age;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equals(id, student.id) && age == student.age && Objects.equals(name, student.name) && Objects.equals(faculty, student.faculty);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, age, faculty);
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", faculty=" + faculty +
+                '}';
     }
 }

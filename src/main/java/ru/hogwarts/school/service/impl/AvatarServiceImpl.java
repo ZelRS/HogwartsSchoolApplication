@@ -9,7 +9,10 @@ import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.service.AvatarService;
 import ru.hogwarts.school.service.StudentService;
 
+import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,8 +35,8 @@ public class AvatarServiceImpl implements AvatarService {
     }
 
     @Override
-    public void uploadAvatar(Long id, MultipartFile avatarFile) throws IOException {
-        Student student = studentService.getById(id);
+    public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
+        Student student = studentService.getById(studentId);
 
         Path filePath = Path.of(avatarsDir, student.getName() + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -45,17 +48,34 @@ public class AvatarServiceImpl implements AvatarService {
         ) {
             bis.transferTo(bos);
         }
-        Avatar avatar = findAvatar(id);
+        Avatar avatar = findAvatar(studentId);
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
         avatar.setFileSize(avatarFile.getSize());
         avatar.setMediaType(avatarFile.getContentType());
-        avatar.setData(avatarFile.getBytes());
+        avatar.setData(generatorDataForDB(filePath));
         avatarRepository.save(avatar);
     }
 
     public Avatar findAvatar(Long id) {
         return avatarRepository.findByStudentId(id).orElse(new Avatar());
+    }
+
+    private byte[] generatorDataForDB(Path filePath) throws IOException {
+        try (InputStream is = Files.newInputStream(filePath);
+             BufferedInputStream bis = new BufferedInputStream(is, 1024);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            BufferedImage bi = ImageIO.read(bis);
+
+            int height = bi.getHeight() / (bi.getWidth() / 100);
+            BufferedImage preview = new BufferedImage(100, height, bi.getType());
+            Graphics2D graphics2D = preview.createGraphics();
+            graphics2D.drawImage(bi, 0,0, 100, height, null);
+            graphics2D.dispose();
+
+            ImageIO.write(preview, getExtensions(filePath.getFileName().toString()), baos);
+            return baos.toByteArray();
+        }
     }
 
     private String getExtensions(String fileName) {

@@ -43,7 +43,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(Long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isEmpty()) {
             throw new EntityNotFoundException("Студент не найден");
@@ -52,7 +52,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student getById(long id) {
+    public Student getById(Long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isEmpty()) {
             throw new EntityNotFoundException("Студент не найден");
