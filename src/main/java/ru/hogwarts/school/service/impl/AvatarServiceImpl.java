@@ -39,8 +39,10 @@ public class AvatarServiceImpl implements AvatarService {
         Student student = studentService.getById(studentId);
 
         Path filePath = Path.of(avatarsDir, student.getName() + "." + getExtensions(avatarFile.getOriginalFilename()));
+
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
+
         try (InputStream is = avatarFile.getInputStream();
              OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
@@ -48,6 +50,7 @@ public class AvatarServiceImpl implements AvatarService {
         ) {
             bis.transferTo(bos);
         }
+
         Avatar avatar = findAvatar(studentId);
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
