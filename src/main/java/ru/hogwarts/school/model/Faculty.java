@@ -34,7 +34,7 @@ public class Faculty {
     public Faculty(Long id, String name, String color, Collection<Student> students) {
         this.id = id;
         this.name = capitalize(name);
-        this.color = color;
+        this.color = color.toUpperCase();
         this.students = students;
     }
 
