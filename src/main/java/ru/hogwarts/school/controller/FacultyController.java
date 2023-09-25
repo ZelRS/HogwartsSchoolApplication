@@ -36,14 +36,14 @@ public class FacultyController {
 
     @DeleteMapping("{id}")
     @Operation(summary = "Удаление факультета по id")
-    public ResponseEntity<Faculty> deleteById(@PathVariable("id") long id) {
+    public ResponseEntity<Faculty> deleteById(@PathVariable("id") Long id) {
         facultyService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("{id}")
     @Operation(summary = "Получить факультет по id")
-    public ResponseEntity<Faculty> getById(@PathVariable("id") long id) {
+    public ResponseEntity<Faculty> getById(@PathVariable("id") Long id) {
         Faculty faculty = facultyService.getById(id);
         return ResponseEntity.ok(faculty);
     }
@@ -63,7 +63,7 @@ public class FacultyController {
 
     @GetMapping("students/{id}")
     @Operation(summary = "Получить студентов по id факультета")
-    public ResponseEntity<Collection<Student>> getStudentsByFacultyId(@PathVariable("id") long facultyId) {
+    public ResponseEntity<Collection<Student>> getStudentsByFacultyId(@PathVariable("id") Long facultyId) {
         Collection<Student> students = facultyService.getById(facultyId).getStudents();
         return ResponseEntity.ok(students);
 

@@ -7,11 +7,11 @@ import java.util.Collection;
 public interface FacultyService {
     Faculty create(Faculty faculty);
 
-    Faculty getById(long id);
+    Faculty getById(Long id);
 
     Faculty update(Faculty faculty);
 
-    void deleteById(long id);
+    void deleteById(Long id);
 
     Collection<Faculty> getAll();
 
