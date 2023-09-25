@@ -31,10 +31,11 @@ public class Faculty {
     @JsonManagedReference
     private Collection<Student> students;
 
-    public Faculty(Long id, String name, String color) {
+    public Faculty(Long id, String name, String color, Collection<Student> students) {
         this.id = id;
-        this.name = capitalize(name.toLowerCase());
-        this.color = color.toUpperCase();
+        this.name = capitalize(name);
+        this.color = color;
+        this.students = students;
     }
 
     @Override
