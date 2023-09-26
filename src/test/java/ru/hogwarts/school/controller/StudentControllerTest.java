@@ -1,16 +1,19 @@
 package ru.hogwarts.school.controller;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+
+import java.util.Collection;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
-
     @LocalServerPort
     private int port;
 
@@ -20,46 +23,56 @@ public class StudentControllerTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    private Long id;
-
     @Test
     void contextLoads() throws Exception {
-        Assertions.assertThat(studentController).isNotNull();
+        assertThat(studentController).isNotNull();
     }
 
     @Test
     void testCreate() throws Exception {
+        Student student = new Student();
+        student.setName("Roman");
+        student.setAge(30);
 
-    }
-
-    @Test
-    void testUpdate() throws Exception {
-
-    }
-
-    @Test
-    void testDeleteById() throws Exception {
-
+        assertThat(this.testRestTemplate
+                        .postForObject("http://localhost:" + port + "/student", student, Student.class))
+                .isNotNull();
     }
 
     @Test
     void testGetById() throws Exception {
-        Assertions.assertThat(this.testRestTemplate.getForObject("http://localhost:" + port + "/1", Student.class))
+        assertThat(this.testRestTemplate
+                .getForObject("http://localhost:" + port + "/student/{id}", Student.class, 1L))
+                .isNotNull();
+    }
+
+    @Test
+    void testGetAll() throws Exception {
+        assertThat(this.testRestTemplate
+                .getForObject("http://localhost:" + port + "/student/all", Collection.class))
                 .isNotNull();
     }
 
     @Test
     void testGetAllByAgeBetween() throws Exception {
-
+        assertThat(this.testRestTemplate
+                .getForObject("http://localhost:" + port + "/student/age?min=25&max=30", Collection.class))
+                .isNotNull();
     }
 
     @Test
     void testGetFacultyByStudentId() throws Exception {
+        assertThat(this.testRestTemplate
+                .getForObject("http://localhost:" + port + "/student/faculty/{id}", Faculty.class, 1L))
+                .isNotNull();
 
     }
 
     @Test
-    void testGetAll() throws Exception {
+    void testUpdate() throws Exception {
+    }
 
+    @Test
+    void testDeleteById() throws Exception{
     }
 }
