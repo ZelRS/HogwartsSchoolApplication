@@ -1,6 +1,6 @@
 package ru.hogwarts.school.controller;
 
-import net.minidev.json.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,57 +11,157 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.AvatarRepository;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
-import ru.hogwarts.school.service.StudentService;
+import ru.hogwarts.school.service.impl.AvatarServiceImpl;
+import ru.hogwarts.school.service.impl.FacultyServiceImpl;
+import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.hogwarts.school.controller.constants.StudentControllerTestConstants.*;
 
 @WebMvcTest
 public class StudentControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private StudentRepository studentRepository;
 
+    @MockBean
+    private AvatarRepository avatarRepository;
+
+    @MockBean
+    private FacultyRepository facultyRepository;
+
     @SpyBean
-    private StudentService studentService;
+    private StudentServiceImpl studentServiceImpl;
+
+    @SpyBean
+    private AvatarServiceImpl avatarServiceImpl;
+
+    @SpyBean
+    private FacultyServiceImpl facultyServiceImpl;
 
     @InjectMocks
     private StudentController studentController;
 
+    @BeforeEach
+    public void setUp() {
+        FACULTY.setId(FACULTY_ID);
+        FACULTY.setName(FACULTY_NAME);
+        FACULTY.setColor(FACULTY_COLOR);
+
+        STUDENT.setId(STUDENT_ID);
+        STUDENT.setName(STUDENT_NAME);
+        STUDENT.setAge(STUDENT_AGE);
+        STUDENT.setFaculty(FACULTY);
+
+        STUDENT_OBJECT.put("id", STUDENT_ID);
+        STUDENT_OBJECT.put("name", STUDENT_NAME);
+        STUDENT_OBJECT.put("age", STUDENT_AGE);
+        STUDENT_OBJECT.put("faculty", FACULTY);
+
+        when(studentRepository.save(any(Student.class))).thenReturn(STUDENT);
+        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(STUDENT));
+        when(studentRepository.findAll()).thenReturn(STUDENTS);
+        when(studentRepository.findByAgeBetween(anyInt(), anyInt())).thenReturn(STUDENTS);
+    }
+
     @Test
-    public void saveStudentTest() throws Exception {
-        Long id = 1L;
-        String name = "Roman";
-        int age = 30;
-
-        JSONObject studentObject = new JSONObject();
-        studentObject.put("name", name);
-        studentObject.put("age", age);
-
-        Student student = new Student();
-        student.setId(id);
-        student.setName(name);
-        student.setAge(age);
-
-        when(studentRepository.save(any(Student.class))).thenReturn(student);
-        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(student));
-
+    public void createTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/student")
-                        .content(studentObject.toString())
+                        .content(STUDENT_OBJECT.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.name").value(name))
-                .andExpect(jsonPath("$.age").value(age));
+                .andExpect(jsonPath("$.id").value(STUDENT_ID))
+                .andExpect(jsonPath("$.name").value(STUDENT_NAME))
+                .andExpect(jsonPath("$.age").value(STUDENT_AGE));
+    }
+
+    @Test
+    public void getByIdTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/{id}", STUDENT_ID)
+                        .content(STUDENT_OBJECT.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(STUDENT_ID))
+                .andExpect(jsonPath("$.name").value(STUDENT_NAME))
+                .andExpect(jsonPath("$.age").value(STUDENT_AGE));
+    }
+
+    @Test
+    public void getAllTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/all")
+                        .content(STUDENT_OBJECT.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id").value(STUDENT_ID))
+                .andExpect(jsonPath("$[0].name").value(STUDENT_NAME))
+                .andExpect(jsonPath("$[0].age").value(STUDENT_AGE));
+    }
+
+    @Test
+    public void getAllByAgeBetweenTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/age?min=31&max=31")
+                        .content(STUDENT_OBJECT.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id").value(STUDENT_ID))
+                .andExpect(jsonPath("$[0].name").value(STUDENT_NAME))
+                .andExpect(jsonPath("$[0].age").value(STUDENT_AGE));
+    }
+
+    @Test
+    public void getFacultyByStudentIdTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/faculty/{id}", STUDENT_ID)
+                        .content(STUDENT_OBJECT.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(FACULTY_ID))
+                .andExpect(jsonPath("$.name").value(FACULTY_NAME))
+                .andExpect(jsonPath("$.color").value(FACULTY_COLOR));
+    }
+
+    @Test
+    public void deleteByIdTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/student/{id}", STUDENT_ID)
+                        .content(STUDENT_OBJECT.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void updateTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/student")
+                        .content(STUDENT_OBJECT.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(STUDENT_ID))
+                .andExpect(jsonPath("$.name").value(STUDENT_NAME))
+                .andExpect(jsonPath("$.age").value(STUDENT_AGE));
     }
 }
