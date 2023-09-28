@@ -10,6 +10,8 @@ import java.util.List;
 public class StudentControllerTestConstants {
     public static final Long STUDENT_ID = 1L;
     public static final String STUDENT_NAME = "Roman";
+
+    public static final String STUDENT_OTHER_NAME = "Ivan";
     public static final int STUDENT_AGE = 31;
     public static final Student STUDENT = new Student();
     public static final List<Student> STUDENTS = new ArrayList<>(List.of(STUDENT));

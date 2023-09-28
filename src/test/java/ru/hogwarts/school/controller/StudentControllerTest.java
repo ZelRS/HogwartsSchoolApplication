@@ -11,11 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts.school.model.Student;
-import ru.hogwarts.school.repository.AvatarRepository;
-import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
-import ru.hogwarts.school.service.impl.AvatarServiceImpl;
-import ru.hogwarts.school.service.impl.FacultyServiceImpl;
 import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
 import java.util.Optional;
@@ -28,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.hogwarts.school.controller.constants.StudentControllerTestConstants.*;
 
-@WebMvcTest
+@WebMvcTest(controllers = StudentController.class)
 public class StudentControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -36,20 +32,8 @@ public class StudentControllerTest {
     @MockBean
     private StudentRepository studentRepository;
 
-    @MockBean
-    private AvatarRepository avatarRepository;
-
-    @MockBean
-    private FacultyRepository facultyRepository;
-
     @SpyBean
     private StudentServiceImpl studentServiceImpl;
-
-    @SpyBean
-    private AvatarServiceImpl avatarServiceImpl;
-
-    @SpyBean
-    private FacultyServiceImpl facultyServiceImpl;
 
     @InjectMocks
     private StudentController studentController;
@@ -69,15 +53,12 @@ public class StudentControllerTest {
         STUDENT_OBJECT.put("name", STUDENT_NAME);
         STUDENT_OBJECT.put("age", STUDENT_AGE);
         STUDENT_OBJECT.put("faculty", FACULTY);
-
-        when(studentRepository.save(any(Student.class))).thenReturn(STUDENT);
-        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(STUDENT));
-        when(studentRepository.findAll()).thenReturn(STUDENTS);
-        when(studentRepository.findByAgeBetween(anyInt(), anyInt())).thenReturn(STUDENTS);
     }
 
     @Test
     public void createTest() throws Exception {
+        when(studentRepository.save(any(Student.class))).thenReturn(STUDENT);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/student")
                         .content(STUDENT_OBJECT.toString())
@@ -91,9 +72,10 @@ public class StudentControllerTest {
 
     @Test
     public void getByIdTest() throws Exception {
+        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(STUDENT));
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student/{id}", STUDENT_ID)
-                        .content(STUDENT_OBJECT.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -104,6 +86,8 @@ public class StudentControllerTest {
 
     @Test
     public void getAllTest() throws Exception {
+        when(studentRepository.findAll()).thenReturn(STUDENTS);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student/all")
                         .content(STUDENT_OBJECT.toString())
@@ -118,6 +102,8 @@ public class StudentControllerTest {
 
     @Test
     public void getAllByAgeBetweenTest() throws Exception {
+        when(studentRepository.findByAgeBetween(anyInt(), anyInt())).thenReturn(STUDENTS);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student/age?min=31&max=31")
                         .content(STUDENT_OBJECT.toString())
@@ -131,6 +117,8 @@ public class StudentControllerTest {
 
     @Test
     public void getFacultyByStudentIdTest() throws Exception {
+        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(STUDENT));
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student/faculty/{id}", STUDENT_ID)
                         .content(STUDENT_OBJECT.toString())
@@ -144,6 +132,8 @@ public class StudentControllerTest {
 
     @Test
     public void deleteByIdTest() throws Exception {
+        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(STUDENT));
+
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/student/{id}", STUDENT_ID)
                         .content(STUDENT_OBJECT.toString())
@@ -154,6 +144,12 @@ public class StudentControllerTest {
 
     @Test
     public void updateTest() throws Exception {
+        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(STUDENT));
+
+        STUDENT.setName(STUDENT_OTHER_NAME);
+
+        when(studentRepository.save(any(Student.class))).thenReturn(STUDENT);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student")
                         .content(STUDENT_OBJECT.toString())
@@ -161,7 +157,7 @@ public class StudentControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(STUDENT_ID))
-                .andExpect(jsonPath("$.name").value(STUDENT_NAME))
+                .andExpect(jsonPath("$.name").value(STUDENT_OTHER_NAME))
                 .andExpect(jsonPath("$.age").value(STUDENT_AGE));
     }
 }

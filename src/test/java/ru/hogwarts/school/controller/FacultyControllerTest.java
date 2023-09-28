@@ -11,12 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts.school.model.Faculty;
-import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.FacultyRepository;
-import ru.hogwarts.school.repository.StudentRepository;
-import ru.hogwarts.school.service.impl.AvatarServiceImpl;
 import ru.hogwarts.school.service.impl.FacultyServiceImpl;
-import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
 import java.util.Optional;
 
@@ -27,26 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.hogwarts.school.controller.constants.FacultyControllerTestConstants.*;
 
-@WebMvcTest
+@WebMvcTest(controllers = FacultyController.class)
 public class FacultyControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private StudentRepository studentRepository;
-
-    @MockBean
-    private AvatarRepository avatarRepository;
-
-    @MockBean
     private FacultyRepository facultyRepository;
-
-    @SpyBean
-    private StudentServiceImpl studentServiceImpl;
-
-    @SpyBean
-    private AvatarServiceImpl avatarServiceImpl;
 
     @SpyBean
     private FacultyServiceImpl facultyServiceImpl;
@@ -69,16 +52,12 @@ public class FacultyControllerTest {
         FACULTY_OBJECT.put("name", FACULTY_NAME);
         FACULTY_OBJECT.put("color", FACULTY_COLOR);
         FACULTY_OBJECT.put("students", STUDENTS);
-
-        when(facultyRepository.save(any(Faculty.class))).thenReturn(FACULTY);
-        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(FACULTY));
-        when(facultyRepository.findAll()).thenReturn(FACULTIES);
-        when(facultyRepository.findAllByNameIgnoreCaseOrColorIgnoreCase(any(String.class), any(String.class)))
-                .thenReturn(FACULTIES);
     }
 
     @Test
     public void createTest() throws Exception {
+        when(facultyRepository.save(any(Faculty.class))).thenReturn(FACULTY);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/faculty")
                         .content(FACULTY_OBJECT.toString())
@@ -92,9 +71,10 @@ public class FacultyControllerTest {
 
     @Test
     public void getByIdTest() throws Exception {
+        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(FACULTY));
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/{id}", FACULTY_ID)
-                        .content(FACULTY_OBJECT.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -105,6 +85,8 @@ public class FacultyControllerTest {
 
     @Test
     public void getAllTest() throws Exception {
+        when(facultyRepository.findAll()).thenReturn(FACULTIES);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/all")
                         .content(FACULTY_OBJECT.toString())
@@ -119,6 +101,9 @@ public class FacultyControllerTest {
 
     @Test
     public void getAllByNameOrColorTest() throws Exception {
+        when(facultyRepository.findAllByNameIgnoreCaseOrColorIgnoreCase(any(String.class), any(String.class)))
+                .thenReturn(FACULTIES);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty?nameOrColor=QQQQ")
                         .content(FACULTY_OBJECT.toString())
@@ -133,6 +118,8 @@ public class FacultyControllerTest {
 
     @Test
     public void getStudentsByFacultyIdTest() throws Exception {
+        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(FACULTY));
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/students/{id}", FACULTY_ID)
                         .content(FACULTY_OBJECT.toString())
@@ -147,6 +134,8 @@ public class FacultyControllerTest {
 
     @Test
     public void deleteByIdTest() throws Exception {
+        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(FACULTY));
+
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/faculty/{id}", FACULTY_ID)
                         .content(FACULTY_OBJECT.toString())
@@ -157,6 +146,12 @@ public class FacultyControllerTest {
 
     @Test
     public void updateTest() throws Exception {
+        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(FACULTY));
+
+        FACULTY.setName(FACULTY_OTHER_NAME);
+
+        when(facultyRepository.save(any(Faculty.class))).thenReturn(FACULTY);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/faculty")
                         .content(FACULTY_OBJECT.toString())
@@ -164,7 +159,7 @@ public class FacultyControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(FACULTY_ID))
-                .andExpect(jsonPath("$.name").value(FACULTY_NAME))
+                .andExpect(jsonPath("$.name").value(FACULTY_OTHER_NAME))
                 .andExpect(jsonPath("$.color").value(FACULTY_COLOR));
     }
 }
