@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import ru.hogwarts.school.model.Faculty;
 
 import java.util.Collection;
@@ -70,11 +72,18 @@ public class FacultyControllerTest {
 
     @Test
     void testUpdate() throws Exception {
+        assertThat(this.testRestTemplate
+                .exchange("http://localhost:" + port + "/faculty",
+                        HttpMethod.PUT, null, Faculty.class))
+                .isNotNull();
 
     }
 
     @Test
     void testDeleteById() throws Exception {
-
+        assertThat(this.testRestTemplate
+                .exchange("http://localhost:" + port + "/faculty/100",
+                        HttpMethod.DELETE, HttpEntity.EMPTY, Void.class))
+                .isNotNull();
     }
 }
