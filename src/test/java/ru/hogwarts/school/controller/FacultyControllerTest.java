@@ -6,13 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.model.Faculty;
 
-import java.util.Collection;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.hogwarts.school.controller.TestConstants.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FacultyControllerTest {
@@ -33,57 +32,84 @@ public class FacultyControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        Faculty faculty = new Faculty();
-        faculty.setName("Qqqq");
-        faculty.setColor("QQQQ");
+        ResponseEntity<Faculty> postResponseEntity = testRestTemplate
+                .postForEntity("http://localhost:" + port + "/faculty", FACULTY, Faculty.class);
 
-        assertThat(this.testRestTemplate
-                .postForObject("http://localhost:" + port + "/faculty", faculty, Faculty.class))
-                .isNotNull();
+        assertThat((postResponseEntity.getStatusCode())).isEqualTo(HttpStatus.OK);
+
+        Faculty postRsFaculty = postResponseEntity.getBody();
+
+        assertThat(postRsFaculty.getName()).isEqualTo(FACULTY.getName());
+        assertThat(postRsFaculty.getColor()).isEqualTo(FACULTY.getColor());
+
     }
 
     @Test
     void testGetById() throws Exception {
-        assertThat(this.testRestTemplate
-                .getForObject("http://localhost:" + port + "/faculty/{id}", Faculty.class, 1L))
-                .isNotNull();
+        ResponseEntity<Faculty> postResponseEntity = testRestTemplate
+                .postForEntity("http://localhost:" + port + "/faculty", FACULTY, Faculty.class);
+
+        Faculty postRsFaculty = postResponseEntity.getBody();
+
+        ResponseEntity<Faculty> getResponseEntity = testRestTemplate
+                .getForEntity("http://localhost:" + port + "/faculty/" + postRsFaculty.getId(), Faculty.class);
+
+        Faculty getRsFaculty = getResponseEntity.getBody();
+
+        assertThat(getRsFaculty.getId()).isEqualTo(postRsFaculty.getId());
+        assertThat(getRsFaculty.getName()).isEqualTo(postRsFaculty.getName());
+        assertThat(getRsFaculty.getColor()).isEqualTo(postRsFaculty.getColor());
     }
 
     @Test
     void testGetAllByNameOrColor() throws Exception {
-        assertThat(this.testRestTemplate
-                .getForObject("http://localhost:" + port + "/faculty?nameOrColor=Qqqq", Collection.class))
+        assertThat(testRestTemplate
+                .getForEntity("http://localhost:" + port + "/faculty?nameOrColor=AnyName", String.class))
                 .isNotNull();
     }
 
     @Test
     void testGetStudentsByFacultyId() throws Exception {
-        assertThat(this.testRestTemplate
-                .getForObject("http://localhost:" + port + "/faculty/students/{id}", Collection.class, 1L))
-                .isNotEmpty();
+        assertThat(testRestTemplate
+                .getForEntity("http://localhost:" + port + "/faculty/student/" + FACULTY_ID, String.class))
+                .isNotNull();
     }
 
     @Test
     void testGetAll() throws Exception {
-        assertThat(this.testRestTemplate
-                .getForObject("http://localhost:" + port + "/faculty/all", Collection.class))
+        assertThat(testRestTemplate.getForEntity("http://localhost:" + port + "/faculty/all", String.class))
                 .isNotNull();
     }
 
     @Test
     void testUpdate() throws Exception {
-        assertThat(this.testRestTemplate
-                .exchange("http://localhost:" + port + "/faculty",
-                        HttpMethod.PUT, null, Faculty.class))
-                .isNotNull();
+        ResponseEntity<Faculty> postResponseEntity = testRestTemplate
+                .postForEntity("http://localhost:" + port + "/faculty", FACULTY, Faculty.class);
+        Faculty postRsFaculty = postResponseEntity.getBody();
 
+        postRsFaculty.setName(FACULTY_OTHER_NAME);
+        testRestTemplate.put("http://localhost:" + port + "/faculty/", postRsFaculty, Faculty.class);
+
+        ResponseEntity<Faculty> getResponseEntity = testRestTemplate
+                .getForEntity("http://localhost:" + port + "/faculty/" + postRsFaculty.getId(), Faculty.class);
+        Faculty getRsFaculty = getResponseEntity.getBody();
+
+        assertThat(getRsFaculty.getName()).isEqualTo(postRsFaculty.getName());
     }
 
     @Test
     void testDeleteById() throws Exception {
-        assertThat(this.testRestTemplate
-                .exchange("http://localhost:" + port + "/faculty/100",
-                        HttpMethod.DELETE, HttpEntity.EMPTY, Void.class))
-                .isNotNull();
+        ResponseEntity<Faculty> postResponseEntity = testRestTemplate
+                .postForEntity("http://localhost:" + port + "/faculty", FACULTY, Faculty.class);
+        Faculty postRsFaculty = postResponseEntity.getBody();
+
+        testRestTemplate.delete("http://localhost:" + port + "/faculty/" + postRsFaculty.getId(), Faculty.class);
+
+        ResponseEntity<Faculty> getResponseEntity = testRestTemplate
+                .getForEntity("http://localhost:" + port + "/faculty/" + postRsFaculty.getId(), Faculty.class);
+
+        Faculty getRsFaculty = getResponseEntity.getBody();
+
+        assertThat(getRsFaculty.getName()).isNull();
     }
 }

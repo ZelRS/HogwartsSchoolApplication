@@ -5,14 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 
-import java.util.Collection;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.hogwarts.school.controller.TestConstants.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
@@ -32,57 +31,89 @@ public class StudentControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        Student student = new Student();
-        student.setName("Roman");
-        student.setAge(30);
+        ResponseEntity<Student> postResponseEntity = testRestTemplate
+                .postForEntity("http://localhost:" + port + "/student", STUDENT, Student.class);
 
-        assertThat(this.testRestTemplate
-                        .postForObject("http://localhost:" + port + "/student", student, Student.class))
-                .isNotNull();
+        assertThat((postResponseEntity.getStatusCode())).isEqualTo(HttpStatus.OK);
+
+        Student postRsStudent = postResponseEntity.getBody();
+
+        assertThat(postRsStudent.getName()).isEqualTo(STUDENT.getName());
+        assertThat(postRsStudent.getAge()).isEqualTo(STUDENT.getAge());
     }
 
     @Test
     void testGetById() throws Exception {
-        assertThat(this.testRestTemplate
-                .getForObject("http://localhost:" + port + "/student/{id}", Student.class, 1L))
-                .isNotNull();
+        ResponseEntity<Student> postResponseEntity = testRestTemplate
+                .postForEntity("http://localhost:" + port + "/student", STUDENT, Student.class);
+        Student postRsStudent = postResponseEntity.getBody();
+
+        ResponseEntity<Student> getResponseEntity = testRestTemplate
+                .getForEntity("http://localhost:" + port + "/student/" + postRsStudent.getId(), Student.class);
+        Student getRsStudent = getResponseEntity.getBody();
+
+        assertThat(getRsStudent.getId()).isEqualTo(postRsStudent.getId());
+        assertThat(getRsStudent.getName()).isEqualTo(postRsStudent.getName());
+        assertThat(getRsStudent.getAge()).isEqualTo(postRsStudent.getAge());
     }
 
     @Test
     void testGetAll() throws Exception {
-        assertThat(this.testRestTemplate
-                .getForObject("http://localhost:" + port + "/student/all", Collection.class))
+        assertThat(testRestTemplate.getForEntity("http://localhost:" + port + "/student/all", String.class))
                 .isNotNull();
     }
 
     @Test
     void testGetAllByAgeBetween() throws Exception {
-        assertThat(this.testRestTemplate
-                .getForObject("http://localhost:" + port + "/student/age?min=25&max=30", Collection.class))
+        assertThat(testRestTemplate
+                .getForEntity("http://localhost:" + port + "/student/age?min=29&max=31", String.class))
                 .isNotNull();
     }
 
     @Test
     void testGetFacultyByStudentId() throws Exception {
-        assertThat(this.testRestTemplate
-                .getForObject("http://localhost:" + port + "/student/faculty/{id}", Faculty.class, 1L))
-                .isNotNull();
+        STUDENT.setFaculty(FACULTY);
 
+        ResponseEntity<Student> postResponseEntity = testRestTemplate
+                .postForEntity("http://localhost:" + port + "/student", STUDENT, Student.class);
+        Student postRsStudent = postResponseEntity.getBody();
+
+        ResponseEntity<Faculty> getResponseEntity = testRestTemplate
+                .getForEntity("http://localhost:" + port + "/student/faculty/" + postRsStudent.getId(), Faculty.class);
+        Faculty getRsFaculty = getResponseEntity.getBody();
+        System.out.println(getRsFaculty);
+
+        assertThat(postRsStudent.getFaculty()).isEqualTo(getRsFaculty);
     }
 
     @Test
     void testUpdate() throws Exception {
-        assertThat(this.testRestTemplate
-                .exchange("http://localhost:" + port + "/student",
-                        HttpMethod.PUT, null, Student.class))
-                .isNotNull();
+        ResponseEntity<Student> postResponseEntity = testRestTemplate
+                .postForEntity("http://localhost:" + port + "/student", STUDENT, Student.class);
+        Student postRsStudent = postResponseEntity.getBody();
+
+        postRsStudent.setName(STUDENT_OTHER_NAME);
+        testRestTemplate.put("http://localhost:" + port + "/student/", postRsStudent, Student.class);
+
+        ResponseEntity<Student> getResponseEntity = testRestTemplate
+                .getForEntity("http://localhost:" + port + "/student/" + postRsStudent.getId(), Student.class);
+        Student getRsStudent = getResponseEntity.getBody();
+
+        assertThat(getRsStudent.getName()).isEqualTo(postRsStudent.getName());
     }
 
     @Test
-    void testDeleteById() throws Exception{
-        assertThat(this.testRestTemplate
-                .exchange("http://localhost:" + port + "/student/100",
-                        HttpMethod.DELETE, HttpEntity.EMPTY, Void.class))
-                .isNotNull();
+    void testDeleteById() throws Exception {
+        ResponseEntity<Student> postResponseEntity = testRestTemplate
+                .postForEntity("http://localhost:" + port + "/student", STUDENT, Student.class);
+        Student postRsStudent = postResponseEntity.getBody();
+
+        testRestTemplate.delete("http://localhost:" + port + "/student/" + postRsStudent.getId(), Student.class);
+
+        ResponseEntity<Student> getResponseEntity = testRestTemplate
+                .getForEntity("http://localhost:" + port + "/student/" + postRsStudent.getId(), Student.class);
+        Student getRsStudent = getResponseEntity.getBody();
+
+        assertThat(getRsStudent.getName()).isNull();
     }
 }
