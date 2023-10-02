@@ -1,7 +1,6 @@
 package ru.hogwarts.school.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +12,6 @@ import java.util.Objects;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 @Entity(name = "Студент")
-@JsonIgnoreProperties(value = {"faculty"})
 @Getter
 @Setter
 @NoArgsConstructor
