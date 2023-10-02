@@ -17,8 +17,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
+@RequestMapping("avatars")
 @Tag(name = "API для работы с аватарами")
 public class AvatarController {
     private final AvatarService avatarService;
@@ -27,7 +31,7 @@ public class AvatarController {
         this.avatarService = avatarService;
     }
 
-    @PostMapping(value = "{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "{studentId}", consumes = MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Загрузить аватар в ДБ и на диск")
     public ResponseEntity<String> uploadAvatar(@PathVariable Long studentId,
                                                @RequestParam MultipartFile avatarFile) throws IOException {
@@ -35,7 +39,7 @@ public class AvatarController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("{id}/avatar/preview")
+    @GetMapping("/preview/{id}")
     @Operation(summary = "Получить превью аватара из базы данных")
     public ResponseEntity<byte[]> downloadAvatar(@PathVariable Long id) {
         Avatar avatar = avatarService.findAvatar(id);
@@ -45,18 +49,26 @@ public class AvatarController {
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(avatar.getData());
     }
 
-    @GetMapping("{id}/avatar")
+    @GetMapping("{id}")
     @Operation(summary = "Получить аватар с диска")
     public void downloadAvatar(@PathVariable Long id, HttpServletResponse response) throws IOException {
         Avatar avatar = avatarService.findAvatar(id);
         Path path = Path.of(avatar.getFilePath());
-        try(InputStream is = Files.newInputStream(path);
-            OutputStream os = response.getOutputStream()) {
+        try (InputStream is = Files.newInputStream(path);
+             OutputStream os = response.getOutputStream()) {
             response.setStatus(200);
             response.setContentType(avatar.getMediaType());
             response.setContentLength((int) avatar.getFileSize());
             is.transferTo(os);
         }
+    }
+
+    @GetMapping
+    @Operation(summary = "Получить все аватары из БД постранично")
+    public ResponseEntity<Collection<Avatar>> getAll(@RequestParam("page") Integer pageNumber,
+                                                     @RequestParam("size") Integer pageSize) {
+        Collection<Avatar> avatars = avatarService.getAll(pageNumber, pageSize);
+        return ResponseEntity.ok(avatars);
     }
 
 }

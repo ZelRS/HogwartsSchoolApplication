@@ -75,6 +75,21 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findByAgeBetween(min, max);
     }
 
+    @Override
+    public Integer getCountOfStudents() {
+        return studentRepository.getCountOfStudents();
+    }
+
+    @Override
+    public Integer getAverageAgeOfStudents() {
+        return studentRepository.getAverageAgeOfStudents();
+    }
+
+    @Override
+    public Collection<Student> getFiveLastStudents() {
+        return studentRepository.getFiveLastStudents();
+    }
+
     private static void ageValidator(int age) {
         if (age <= 0 || age > 100) {
             throw new StudentAgeException("Некорректный возраст");
