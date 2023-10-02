@@ -31,6 +31,12 @@ public class Faculty {
     @JsonManagedReference
     private Collection<Student> students;
 
+    public Faculty(Long id, String name, String color) {
+        this.id = id;
+        this.name =capitalize(name.toLowerCase());
+        this.color = color.toUpperCase();
+    }
+
     public Faculty(Long id, String name, String color, Collection<Student> students) {
         this.id = id;
         this.name = capitalize(name);
