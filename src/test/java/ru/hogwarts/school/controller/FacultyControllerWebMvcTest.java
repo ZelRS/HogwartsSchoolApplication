@@ -21,10 +21,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.hogwarts.school.controller.constants.FacultyControllerTestConstants.*;
+import static ru.hogwarts.school.controller.constants.FacultyControllerWebMvcTestConstants.*;
 
 @WebMvcTest(controllers = FacultyController.class)
-public class FacultyControllerTest {
+public class FacultyControllerWebMvcTest {
     @Autowired
     private MockMvc mockMvc;
 

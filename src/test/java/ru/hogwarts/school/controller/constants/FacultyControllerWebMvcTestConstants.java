@@ -7,7 +7,7 @@ import ru.hogwarts.school.model.Student;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FacultyControllerTestConstants {
+public class FacultyControllerWebMvcTestConstants {
     public static final Long STUDENT_ID = 1L;
     public static final String STUDENT_NAME = "StudentName";
     public static final int STUDENT_AGE = 31;
