@@ -37,13 +37,6 @@ public class Faculty {
         this.color = color.toUpperCase();
     }
 
-    public Faculty(Long id, String name, String color, Collection<Student> students) {
-        this.id = id;
-        this.name = capitalize(name.toLowerCase());
-        this.color = color.toUpperCase();
-        this.students = students;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
