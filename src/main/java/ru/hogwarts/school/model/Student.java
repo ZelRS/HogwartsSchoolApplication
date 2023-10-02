@@ -41,6 +41,13 @@ public class Student {
         this.faculty = faculty;
     }
 
+    public Student(Long id, String name, int age, Faculty faculty) {
+        this.id = id;
+        this.name = capitalize(name.toLowerCase());
+        this.age = age;
+        this.faculty = faculty;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

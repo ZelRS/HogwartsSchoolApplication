@@ -29,7 +29,7 @@ public class FacultyController {
 
     @PutMapping
     @Operation(summary = "Изменение факультета")
-    public ResponseEntity<Faculty> edit(@RequestBody Faculty facultyRs) {
+    public ResponseEntity<Faculty> update(@RequestBody Faculty facultyRs) {
         Faculty faculty = facultyService.update(facultyRs);
         return ResponseEntity.ok(faculty);
     }
