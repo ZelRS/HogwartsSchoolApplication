@@ -1,9 +1,9 @@
-package ru.hogwarts.school.controller;
+package ru.hogwarts.school.controller.testresttemplate.constants;
 
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 
-public class TestConstants {
+public class TestRestTemplateConstants {
     public static final Long STUDENT_ID = 1L;
     public static final String STUDENT_NAME = "Studentname";
     public static final String STUDENT_OTHER_NAME = "Otherstudentname";

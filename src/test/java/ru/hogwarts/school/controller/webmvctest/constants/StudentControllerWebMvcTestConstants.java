@@ -1,4 +1,4 @@
-package ru.hogwarts.school.controller.constants;
+package ru.hogwarts.school.controller.webmvctest.constants;
 
 import net.minidev.json.JSONObject;
 import ru.hogwarts.school.model.Faculty;

@@ -41,11 +41,10 @@ public class Student {
         this.faculty = faculty;
     }
 
-    public Student(Long id, String name, int age, Faculty faculty) {
+    public Student(Long id, String name, int age) {
         this.id = id;
         this.name = capitalize(name.toLowerCase());
         this.age = age;
-        this.faculty = faculty;
     }
 
     @Override
