@@ -34,7 +34,7 @@ public class Student {
 
     public Student(Long id, String name, int age) {
         this.id = id;
-        this.name = name;
+        this.name = capitalize(name.toLowerCase());
         this.age = age;
     }
 
