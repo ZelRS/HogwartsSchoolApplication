@@ -70,4 +70,25 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
+    @GetMapping("count")
+    @Operation(summary = "Получить количество студентов в школе")
+    public ResponseEntity<Integer> getCountOfStudents() {
+        Integer count = studentService.getCountOfStudents();
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("average-age")
+    @Operation(summary = "Получить средний возраст студентов")
+    public ResponseEntity<Integer> getAverageAgeOfStudents() {
+        Integer avgAge = studentService.getAverageAgeOfStudents();
+        return ResponseEntity.ok(avgAge);
+    }
+
+    @GetMapping("last-five")
+    @Operation(summary = "Получить 5 последних студентов")
+    public ResponseEntity<Collection<Student>> getFiveLastStudents() {
+        Collection<Student> fiveLastStudents = studentService.getFiveLastStudents();
+        return ResponseEntity.ok(fiveLastStudents);
+    }
+
 }
