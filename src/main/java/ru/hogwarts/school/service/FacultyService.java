@@ -5,15 +5,15 @@ import ru.hogwarts.school.model.Faculty;
 import java.util.Collection;
 
 public interface FacultyService {
-    Faculty create(Faculty faculty);
+    Faculty create(Faculty faculty); //создать факультет
 
-    Faculty getById(Long id);
+    Faculty getById(Long id); //получить факультет по id
 
-    Faculty update(Faculty faculty);
+    Faculty update(Faculty faculty); // обновить существующий факультет
 
-    void deleteById(Long id);
+    void deleteById(Long id); // удалить факультет по id
 
-    Collection<Faculty> getAll();
+    Collection<Faculty> getAll(); // получить все факультеты
 
-    Collection<Faculty> getAllByNameOrColor(String name, String color);
+    Collection<Faculty> getAllByNameOrColor(String name, String color); // получить факультеты по имени или цвету
 }

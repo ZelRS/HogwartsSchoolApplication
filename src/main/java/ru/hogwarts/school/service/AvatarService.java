@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.util.Collection;
 
 public interface AvatarService {
-    Avatar findAvatar(Long id);
+    Avatar findAvatar(Long id); //найти аватар студента по id
 
-    void uploadAvatar(Long id, MultipartFile avatar) throws IOException;
+    void uploadAvatar(Long id, MultipartFile avatar) throws IOException; // загрузить аватар студента
 
-    Collection<Avatar> getAll(Integer pageNumber, Integer pageSize);
+    Collection<Avatar> getAll(Integer pageNumber, Integer pageSize); //получить все аватары
 }

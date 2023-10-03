@@ -5,21 +5,21 @@ import ru.hogwarts.school.model.Student;
 import java.util.Collection;
 
 public interface StudentService {
-    Student create(Student student);
+    Student create(Student student); //создать студента
 
-    Student getById(Long id);
+    Student getById(Long id); // получить студента по id
 
-    Student update(Student student);
+    Student update(Student student); //обновить существующего студента
 
-    void deleteById(Long id);
+    void deleteById(Long id); //удалить студента по id
 
-    Collection<Student> getAll();
+    Collection<Student> getAll(); //получить список всех студентов
 
-    Collection<Student> getAllByAgeBetween(int max, int min);
+    Collection<Student> getAllByAgeBetween(int max, int min); //получить стдентов с возрастом меньше max и больше min
 
-    Integer getCountOfStudents();
+    Integer getCountOfStudents(); //получить количество студентов
 
-    Integer getAverageAgeOfStudents();
+    Integer getAverageAgeOfStudents(); //получить средний возраст студентов
 
-    Collection<Student> getFiveLastStudents();
+    Collection<Student> getFiveLastStudents(); //получить 5 последних студентов
 }
