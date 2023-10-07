@@ -69,8 +69,7 @@ public class AvatarServiceImpl implements AvatarService {
 
     @Override
     public Collection<Avatar> getAll(Integer pageNumber, Integer pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
-        return avatarRepository.findAll(pageRequest).getContent();
+        return avatarRepository.findAll(PageRequest.of(pageNumber - 1, pageSize)).getContent();
     }
 
     private byte[] generatorDataForDB(Path filePath) throws IOException {
