@@ -11,5 +11,5 @@ public interface AvatarService {
 
     void uploadAvatar(Long id, MultipartFile avatar) throws IOException; // загрузить аватар студента
 
-    Collection<Avatar> getAll(Integer pageNumber, Integer pageSize); //получить все аватары
+    Collection<Avatar> getAll(Integer pageNumber, Integer pageSize); //получить все аватары с пагинацией
 }

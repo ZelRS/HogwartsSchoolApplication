@@ -63,12 +63,11 @@ public class AvatarController {
         }
     }
 
-    @GetMapping
+    @GetMapping("page")
     @Operation(summary = "Получить все аватары из БД постранично")
-    public ResponseEntity<Collection<Avatar>> getAll(@RequestParam("page") Integer pageNumber,
-                                                     @RequestParam("size") Integer pageSize) {
-        Collection<Avatar> avatars = avatarService.getAll(pageNumber, pageSize);
-        return ResponseEntity.ok(avatars);
+    public ResponseEntity<Collection<Avatar>> getAll(@RequestParam Integer pageNumber,
+                                                     @RequestParam Integer pageSize) {
+        return ResponseEntity.ok(avatarService.getAll(pageNumber, pageSize));
     }
 
 }
