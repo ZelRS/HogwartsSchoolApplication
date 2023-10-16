@@ -16,4 +16,8 @@ public interface FacultyService {
     Collection<Faculty> getAll(); // получить все факультеты
 
     Collection<Faculty> getAllByNameOrColor(String name, String color); // получить факультеты по имени или цвету
+
+    String getLongestName(); //получить самое длинное имя факультета
+
+    Integer getFastestResultOfStream(); //получить результат вычисления стрима за наименьшее кол-во времени
 }

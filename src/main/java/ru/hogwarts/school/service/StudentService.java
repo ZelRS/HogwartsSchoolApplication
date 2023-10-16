@@ -22,4 +22,9 @@ public interface StudentService {
     Integer getAverageAgeOfStudents(); //получить средний возраст студентов
 
     Collection<Student> getFiveLastStudents(); //получить 5 последних студентов
+
+    Collection<String> getSortedUpperCaseNamesStartsFromA(); //получить список имен, начинающихся на "A" в алфавитном
+                                                             // порядке в верхнем регистре
+
+    Double getAverageAgeOfStudentsWithStreamAPI(); //получить средний возраст студентов, используя Stream API
 }
