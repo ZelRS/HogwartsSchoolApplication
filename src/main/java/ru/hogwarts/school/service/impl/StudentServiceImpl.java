@@ -135,6 +135,50 @@ public class StudentServiceImpl implements StudentService {
                 .orElse(0);
     }
 
+    @Override
+    public void getStudentsWithThreadsInConsole() {
+        List<String> studentsNames = studentRepository.findAll().stream()
+                .map(Student::getName)
+                .collect(Collectors.toList());
+
+        System.out.println(studentsNames.get(0));
+        System.out.println(studentsNames.get(1));
+
+        new Thread(() -> {
+            System.out.println(studentsNames.get(2));
+            System.out.println(studentsNames.get(3));
+        }).start();
+
+        new Thread(() -> {
+            System.out.println(studentsNames.get(4));
+            System.out.println(studentsNames.get(5));
+        }).start();
+    }
+
+    @Override
+    public void getStudentsWithSynchronizedThreadsInConsole() {
+        List<String> studentsNames = studentRepository.findAll().stream()
+                .map(Student::getName)
+                .collect(Collectors.toList());
+
+        printName(studentsNames.get(0));
+        printName(studentsNames.get(1));
+
+        new Thread(() -> {
+            printName(studentsNames.get(2));
+            printName(studentsNames.get(3));
+        }).start();
+
+        new Thread(() -> {
+            printName(studentsNames.get(4));
+            printName(studentsNames.get(5));
+        }).start();
+    }
+
+    private synchronized void printName(String name) {
+        System.out.println(name);
+    }
+
     private static void ageValidator(int age) {
         if (age <= 0 || age > 100) {
             LOGGER.error("Age can't be less than {} and more than {}", 0, 100);
