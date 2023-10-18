@@ -11,6 +11,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
@@ -89,6 +90,32 @@ public class FacultyServiceImpl implements FacultyService {
         LOGGER.info("Was invoked method for get all faculties by name or color");
         LOGGER.debug("Faculty was received successfully");
         return facultyRepository.findAllByNameIgnoreCaseOrColorIgnoreCase(name, color);
+    }
+
+    @Override
+    public String getLongestName() {
+        LOGGER.info("Was invoked method for get longest name");
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length))
+                .orElse("");
+    }
+
+    @Override
+    public Integer getFastestResultOfStream() {
+        LOGGER.info("Was invoked method for get sum of iteration");
+        Long startTime = System.nanoTime();
+
+        int sum = 0;
+        for (int a = 1; a <= 1_000_000; a++) {
+            sum += a;
+        }
+
+        Long endTime = System.nanoTime();
+        long executionTime = endTime - startTime;
+
+        LOGGER.info("Sum was received successfully. Method completed in " + executionTime + "ns");
+        return sum; // использование цикла вместо Stream API более, чем в 4 раза ускоряет выполнение запроса
     }
 
     private static void referenceNameMaker(Faculty faculty) {

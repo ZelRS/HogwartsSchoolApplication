@@ -88,4 +88,17 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getFiveLastStudents());
     }
 
+    @GetMapping("names")
+    @Operation(summary = "Получить список имен, начинающихся на \"A\" в алфавитном порядке в верхнем регистре")
+    public ResponseEntity<Collection<String>> getSortedUpperCaseNamesStartsFromA() {
+        return ResponseEntity.ok(studentService.getSortedUpperCaseNamesStartsFromA());
+    }
+
+    @GetMapping("age/average-with-streamAPI")
+    @Operation(summary = "Получить средний возраст студентов, используя Stream API")
+    public ResponseEntity<Double> getAverageAgeOfStudentsWithStreamAPI() {
+        return ResponseEntity.ok(studentService.getAverageAgeOfStudentsWithStreamAPI());
+    }
+
+
 }
