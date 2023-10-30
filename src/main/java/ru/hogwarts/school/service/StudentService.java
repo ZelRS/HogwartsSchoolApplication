@@ -25,6 +25,11 @@ public interface StudentService {
 
     Collection<String> getSortedUpperCaseNamesStartsFromA(); //получить список имен, начинающихся на "A" в алфавитном
                                                              // порядке в верхнем регистре
-
     Double getAverageAgeOfStudentsWithStreamAPI(); //получить средний возраст студентов, используя Stream API
+
+    void getStudentsWithThreadsInConsole(); //получить список студентов в консоль,
+                                                  // используя дополнительные потоки
+
+    void getStudentsWithSynchronizedThreadsInConsole(); //получить список студентов в консоль,
+                                                        // используя дополнительные СИНХРОНИЗИРОВАННЫЕ потоки
 }

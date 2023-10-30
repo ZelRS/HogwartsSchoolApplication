@@ -100,5 +100,17 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getAverageAgeOfStudentsWithStreamAPI());
     }
 
+    @GetMapping("/all/console")
+    @Operation(summary = "Получить в консоли всех студентов с ипользованием дополнительных потоков")
+    public void getStudentsWithThreadsInConsole() {
+        studentService.getStudentsWithThreadsInConsole();
+    }
+
+    @GetMapping("/all/console/synchronized")
+    @Operation(summary = "Получить в консоли всех студентов с ипользованием дополнительных СИНХРОНИЗИРОВАННЫХ потоков")
+    public void getStudentsWithSynchronizedTreadsInConsole() {
+        studentService.getStudentsWithSynchronizedThreadsInConsole();
+    }
+
 
 }
