@@ -26,6 +26,7 @@ public class StudentServiceImpl implements StudentService {
         this.studentRepository = studentRepository;
     }
 
+    // создаем студента
     @Override
     public Student create(Student student) {
         log.info("Was invoked method for create student");
@@ -36,6 +37,7 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.save(student);
     }
 
+    // обновляем существующего студента
     @Override
     public Student update(Student student) {
         log.info("Was invoked method for update student");
@@ -51,6 +53,7 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.save(student);
     }
 
+    // удаляем студента по id
     @Override
     public void deleteById(Long id) {
         log.info("Was invoked method for delete student with ID = {}", id);
@@ -63,6 +66,7 @@ public class StudentServiceImpl implements StudentService {
         log.debug("The student was removed successfully");
     }
 
+    // получаем студента по id
     @Override
     public Student getById(Long id) {
         log.info("Was invoked method for get student with ID = {}", id);
@@ -75,6 +79,7 @@ public class StudentServiceImpl implements StudentService {
         return student.get();
     }
 
+    // получаем список всех студентов
     @Override
     public Collection<Student> getAll() {
         log.info("Was invoked method for get all students");
@@ -82,6 +87,7 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findAll();
     }
 
+    // получаем стдентов с возрастом меньше max и больше min
     @Override
     public Collection<Student> getAllByAgeBetween(int min, int max) {
         log.info("Was invoked method for get all students with age between {} and {}", min, max);
@@ -95,6 +101,7 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findByAgeBetween(min, max);
     }
 
+    // получаем количество студентов
     @Override
     public Integer getCountOfStudents() {
         log.info("Was invoked method for get count of students");
@@ -102,6 +109,7 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.getCountOfStudents();
     }
 
+    // получаем средний возраст всех студентов
     @Override
     public Integer getAverageAgeOfStudents() {
         log.info("Was invoked method for get average age of students");
@@ -109,6 +117,7 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.getAverageAgeOfStudents();
     }
 
+    // получаем 5 последних студентов
     @Override
     public Collection<Student> getFiveLastStudents() {
         log.info("Was invoked method for get five last students");
@@ -116,6 +125,7 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.getFiveLastStudents();
     }
 
+    // получаем список имен, начинающихся на "A" в алфавитном порядке в верхнем регистре
     @Override
     public Collection<String> getSortedUpperCaseNamesStartsFromA() {
         log.info("Was invoked method for get sorted uppercase names starts from A");
@@ -126,6 +136,7 @@ public class StudentServiceImpl implements StudentService {
                 .collect(Collectors.toList());
     }
 
+    // получаем средний возраст студентов, используя Stream API
     @Override
     public Double getAverageAgeOfStudentsWithStreamAPI() {
         log.info("Was invoked method for get average age of students with StreamAPI");
@@ -135,6 +146,7 @@ public class StudentServiceImpl implements StudentService {
                 .orElse(0);
     }
 
+    // получаем список студентов в консоль, используя дополнительные потоки
     @Override
     public void getStudentsWithThreadsInConsole() {
         List<String> studentsNames = studentRepository.findAll().stream()
@@ -155,6 +167,7 @@ public class StudentServiceImpl implements StudentService {
         }).start();
     }
 
+    // получаем список студентов в консоль, используя дополнительные СИНХРОНИЗИРОВАННЫЕ потоки
     @Override
     public void getStudentsWithSynchronizedThreadsInConsole() {
         List<String> studentsNames = studentRepository.findAll().stream()
@@ -175,10 +188,12 @@ public class StudentServiceImpl implements StudentService {
         }).start();
     }
 
+    // синхронизированный метод для вывода в консоль имен студентов в многопоточности
     private synchronized void printName(String name) {
         System.out.println(name);
     }
 
+    // проверяем корректность переданного возраста
     private static void ageValidator(int age) {
         if (age <= 0 || age > 100) {
             log.error("Age can't be less than {} and more than {}", 0, 100);
@@ -186,14 +201,16 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-    private static void referenceNameMaker(Student student) {
-        student.setName(capitalize(student.getName().toLowerCase()));
-    }
-
+    // проверяем, что имя передано
     private static void nameValidator(Student student) {
         if (isBlank(student.getName())) {
             log.error("Name can't be empty");
             throw new NullNameFieldException("Вы не задали имя");
         }
+    }
+
+    // формируем корректное предатвление имени
+    private static void referenceNameMaker(Student student) {
+        student.setName(capitalize(student.getName().toLowerCase()));
     }
 }

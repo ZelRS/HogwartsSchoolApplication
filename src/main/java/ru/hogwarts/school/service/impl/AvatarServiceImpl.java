@@ -39,6 +39,7 @@ public class AvatarServiceImpl implements AvatarService {
         this.studentService = studentService;
     }
 
+    // загружаем аватар в БД и в локальное хранилище с присваиванием его студенту
     @Override
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
         log.info("Was invoked method for upload avatar to student with ID = {}", studentId);
@@ -49,6 +50,7 @@ public class AvatarServiceImpl implements AvatarService {
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
 
+        // загрузка аватара в локальное хранилище
         try (InputStream is = avatarFile.getInputStream();
              OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
@@ -57,6 +59,7 @@ public class AvatarServiceImpl implements AvatarService {
             bis.transferTo(bos);
         }
 
+        // загрузка аватара в БД
         Avatar avatar = findAvatar(studentId);
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
@@ -64,9 +67,11 @@ public class AvatarServiceImpl implements AvatarService {
         avatar.setMediaType(avatarFile.getContentType());
         avatar.setData(generatorDataForDB(filePath));
         avatarRepository.save(avatar);
+
         log.debug("The avatar was uploaded successfully");
     }
 
+    // находим аватар в БД и, если его нет, создаем новый аватар
     @Override
     public Avatar findAvatar(Long id) {
         log.info("Was invoked method for find avatar with ID = {}", id);
@@ -74,6 +79,7 @@ public class AvatarServiceImpl implements AvatarService {
         return avatarRepository.findByStudentId(id).orElse(new Avatar());
     }
 
+    // получаем все аватары из БД с ипользованием пагинации
     @Override
     public Collection<Avatar> getAll(Integer pageNumber, Integer pageSize) {
         log.info("Was invoked method for find all avatars where page has number {} and has size {}",
@@ -82,6 +88,7 @@ public class AvatarServiceImpl implements AvatarService {
         return avatarRepository.findAll(PageRequest.of(pageNumber - 1, pageSize)).getContent();
     }
 
+    // данный метод генерирует сжимает получаемое изображение для последующей передачи его в БД
     private byte[] generatorDataForDB(Path filePath) throws IOException {
         log.info("Was invoked method for generate avatar from DB");
         try (InputStream is = Files.newInputStream(filePath);
@@ -101,6 +108,7 @@ public class AvatarServiceImpl implements AvatarService {
         }
     }
 
+    // вытаскиваем расширение файла
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }

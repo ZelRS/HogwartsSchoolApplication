@@ -11,10 +11,13 @@ public class InfoServiceImpl implements InfoService {
     @Value("${server.port}")
     private Integer serverPort;
 
+    // получаем порт, на которм запущено приложение
     public Integer getPort() {
         return serverPort;
     }
 
+    // получаем результат вычисления стрима за наименьшее кол-во времени(метод не относится к приложению
+    // и написан в тренировочных целях
     @Override
     public Integer getFastestResultOfStream() {
         log.info("Was invoked method for get sum of iteration");

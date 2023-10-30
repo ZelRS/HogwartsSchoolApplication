@@ -13,6 +13,7 @@ import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
+//сущность студента, имеющая поля id, имени, возраста и его факультета
 @Entity(name = "Студент")
 @JsonIgnoreProperties(value = {"faculty"})
 @Getter

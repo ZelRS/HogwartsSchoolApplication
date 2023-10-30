@@ -25,6 +25,7 @@ public class FacultyServiceImpl implements FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
+    // создаем факультет
     @Override
     public Faculty create(Faculty faculty) {
         log.info("Was invoked method for create faculty");
@@ -36,6 +37,7 @@ public class FacultyServiceImpl implements FacultyService {
         return facultyRepository.save(faculty);
     }
 
+    // обновляем существующий факультет
     @Override
     public Faculty update(Faculty faculty) {
         log.info("Was invoked method for update faculty");
@@ -52,6 +54,7 @@ public class FacultyServiceImpl implements FacultyService {
         return facultyRepository.save(faculty);
     }
 
+    // удаляем факультет по id
     @Override
     public void deleteById(Long id) {
         log.info("Was invoked method for delete faculty with ID = {}", id);
@@ -64,6 +67,7 @@ public class FacultyServiceImpl implements FacultyService {
         log.debug("Faculty was removed successfully");
     }
 
+    // получаем факультет по id
     @Override
     public Faculty getById(Long id) {
         log.info("Was invoked method for get faculty with ID = {}", id);
@@ -76,6 +80,7 @@ public class FacultyServiceImpl implements FacultyService {
         return faculty.get();
     }
 
+    // получаем все факультеты
     @Override
     public Collection<Faculty> getAll() {
         log.info("Was invoked method for get all faculties");
@@ -83,6 +88,7 @@ public class FacultyServiceImpl implements FacultyService {
         return facultyRepository.findAll();
     }
 
+    // получаем факультеты по имени или цвету
     @Override
     public Collection<Faculty> getAllByNameOrColor(String name, String color) {
         log.info("Was invoked method for get all faculties by name or color");
@@ -90,6 +96,7 @@ public class FacultyServiceImpl implements FacultyService {
         return facultyRepository.findAllByNameIgnoreCaseOrColorIgnoreCase(name, color);
     }
 
+    // получаем самое длинное имя факультета
     @Override
     public String getLongestName() {
         log.info("Was invoked method for get longest name");
@@ -99,14 +106,17 @@ public class FacultyServiceImpl implements FacultyService {
                 .orElse("");
     }
 
+    // формируем корректное представление имени
     private static void referenceNameMaker(Faculty faculty) {
         faculty.setName(capitalize(faculty.getName().toLowerCase()));
     }
 
+    // формируем корректное представление цвета
     private static void referenceColorMaker(Faculty faculty) {
         faculty.setColor(faculty.getColor().toUpperCase());
     }
 
+    // проверяем, что имя передано
     private static void nameValidator(Faculty faculty) {
         if (isBlank(faculty.getName())) {
             log.error("Name can't be empty");
@@ -114,6 +124,7 @@ public class FacultyServiceImpl implements FacultyService {
         }
     }
 
+    // проверяем, что цвет передан
     private static void colorValidator(Faculty faculty) {
         if (isBlank(faculty.getColor())) {
             log.error("Color can't be empty");

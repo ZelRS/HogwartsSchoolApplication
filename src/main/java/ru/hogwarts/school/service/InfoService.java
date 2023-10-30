@@ -1,7 +1,10 @@
 package ru.hogwarts.school.service;
 
 public interface InfoService {
+    // получаем порт, на которм запущено приложение
     Integer getPort();
 
-    Integer getFastestResultOfStream(); //получить результат вычисления стрима за наименьшее кол-во времени
+    // получаем результат вычисления стрима за наименьшее кол-во времени(метод не относится к приложению
+    // и написан в тренировочных целях
+    Integer getFastestResultOfStream();
 }
