@@ -5,19 +5,24 @@ import ru.hogwarts.school.model.Faculty;
 import java.util.Collection;
 
 public interface FacultyService {
-    Faculty create(Faculty faculty); //создать факультет
+    // создаем факультет
+    Faculty create(Faculty faculty);
 
-    Faculty getById(Long id); //получить факультет по id
+    // получаем факультет по id
+    Faculty getById(Long id);
 
-    Faculty update(Faculty faculty); // обновить существующий факультет
+    // обновляем существующий факультет
+    Faculty update(Faculty faculty);
 
-    void deleteById(Long id); // удалить факультет по id
+    // удаляем факультет по id
+    void deleteById(Long id);
 
-    Collection<Faculty> getAll(); // получить все факультеты
+    // получаем все факультеты
+    Collection<Faculty> getAll();
 
-    Collection<Faculty> getAllByNameOrColor(String name, String color); // получить факультеты по имени или цвету
+    // получаем факультеты по имени или цвету
+    Collection<Faculty> getAllByNameOrColor(String name, String color);
 
-    String getLongestName(); //получить самое длинное имя факультета
-
-    Integer getFastestResultOfStream(); //получить результат вычисления стрима за наименьшее кол-во времени
+    //получаем самое длинное имя факультета
+    String getLongestName();
 }

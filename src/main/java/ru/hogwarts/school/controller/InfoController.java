@@ -23,4 +23,10 @@ public class InfoController {
     public ResponseEntity<Integer> getPort() {
         return ResponseEntity.ok(infoService.getPort());
     }
+
+    @GetMapping("get-fastest-result-of-stream")
+    @Operation(summary = "Получить результат вычисления стрима за наименьшее кол-во времени")
+    public ResponseEntity<Integer> getFastestResultOfStream() {
+        return ResponseEntity.ok(infoService.getFastestResultOfStream());
+    }
 }

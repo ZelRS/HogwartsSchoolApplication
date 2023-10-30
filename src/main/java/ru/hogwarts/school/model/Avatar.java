@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Objects;
 
+// сущность аватаров, имеющая поля id, путь к файлу, размер, тип, байт-код и присвающего студента
 @Entity(name = "аватар")
 @Getter
 @Setter

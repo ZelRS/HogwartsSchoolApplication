@@ -1,7 +1,6 @@
 package ru.hogwarts.school.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -26,23 +25,24 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 @Transactional
+@Slf4j
 public class AvatarServiceImpl implements AvatarService {
-
     @Value("${path.to.avatar.folder}")
     private String avatarsDir;
-    private final AvatarRepository avatarRepository;
-    private final StudentService studentService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AvatarServiceImpl.class);
+    private final AvatarRepository avatarRepository;
+
+    private final StudentService studentService;
 
     public AvatarServiceImpl(AvatarRepository avatarRepository, StudentService studentService) {
         this.avatarRepository = avatarRepository;
         this.studentService = studentService;
     }
 
+    // загружаем аватар в БД и в локальное хранилище с присваиванием его студенту
     @Override
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
-        LOGGER.info("Was invoked method for upload avatar to student with ID = {}", studentId);
+        log.info("Was invoked method for upload avatar to student with ID = {}", studentId);
         Student student = studentService.getById(studentId);
 
         Path filePath = Path.of(avatarsDir, student.getName() + "." + getExtensions(avatarFile.getOriginalFilename()));
@@ -50,6 +50,7 @@ public class AvatarServiceImpl implements AvatarService {
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
 
+        // загрузка аватара в локальное хранилище
         try (InputStream is = avatarFile.getInputStream();
              OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
@@ -58,6 +59,7 @@ public class AvatarServiceImpl implements AvatarService {
             bis.transferTo(bos);
         }
 
+        // загрузка аватара в БД
         Avatar avatar = findAvatar(studentId);
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
@@ -65,26 +67,30 @@ public class AvatarServiceImpl implements AvatarService {
         avatar.setMediaType(avatarFile.getContentType());
         avatar.setData(generatorDataForDB(filePath));
         avatarRepository.save(avatar);
-        LOGGER.debug("The avatar was uploaded successfully");
+
+        log.debug("The avatar was uploaded successfully");
     }
 
+    // находим аватар в БД и, если его нет, создаем новый аватар
     @Override
     public Avatar findAvatar(Long id) {
-        LOGGER.info("Was invoked method for find avatar with ID = {}", id);
-        LOGGER.debug("The avatar was received successfully");
+        log.info("Was invoked method for find avatar with ID = {}", id);
+        log.debug("The avatar was received successfully");
         return avatarRepository.findByStudentId(id).orElse(new Avatar());
     }
 
+    // получаем все аватары из БД с ипользованием пагинации
     @Override
     public Collection<Avatar> getAll(Integer pageNumber, Integer pageSize) {
-        LOGGER.info("Was invoked method for find all avatars where page has number {} and has size {}",
+        log.info("Was invoked method for find all avatars where page has number {} and has size {}",
                 pageNumber, pageSize);
-        LOGGER.debug("List of avatars was received successfully");
+        log.debug("List of avatars was received successfully");
         return avatarRepository.findAll(PageRequest.of(pageNumber - 1, pageSize)).getContent();
     }
 
+    // данный метод генерирует сжимает получаемое изображение для последующей передачи его в БД
     private byte[] generatorDataForDB(Path filePath) throws IOException {
-        LOGGER.info("Was invoked method for generate avatar from DB");
+        log.info("Was invoked method for generate avatar from DB");
         try (InputStream is = Files.newInputStream(filePath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -97,11 +103,12 @@ public class AvatarServiceImpl implements AvatarService {
             graphics2D.dispose();
 
             ImageIO.write(preview, getExtensions(filePath.getFileName().toString()), baos);
-            LOGGER.debug("The avatar was generated successfully");
+            log.debug("The avatar was generated successfully");
             return baos.toByteArray();
         }
     }
 
+    // вытаскиваем расширение файла
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
