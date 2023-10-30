@@ -73,10 +73,4 @@ public class FacultyController {
     public ResponseEntity<String> getLongestName() {
         return ResponseEntity.ok(facultyService.getLongestName());
     }
-
-    @GetMapping("get-fastest-result-of-stream")
-    @Operation(summary = "Получить результат вычисления стрима за наименьшее кол-во времени")
-    public ResponseEntity<Integer> getFastestResultOfStream() {
-        return ResponseEntity.ok(facultyService.getFastestResultOfStream());
-    }
 }
